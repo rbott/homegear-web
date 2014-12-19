@@ -81,7 +81,10 @@ class HomeMaticInstance
 						"valveState" => $valve->getValveState(),
 						"tempSensor" => $valve->getTempSensor(),
 						"targetTemp" => $valve->getTargetTemp(),
-						"controlMode" => $valve->getControlMode());
+						"controlMode" => $valve->getControlMode(),
+						"tempFallMode" => $valve->getTempFallMode(),
+						"tempFallTemp" => $valve->getTempFallTemp(),
+						"tempFallWindow" => $valve->getTempFallWindow());
 			}
 		}
 		foreach($this->envSensors AS $sensor) {

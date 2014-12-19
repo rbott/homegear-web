@@ -34,6 +34,32 @@
 						<input value="Aktualisieren" type="submit">
 					</div>
 				</div>
+				<div class="ui-grid-b form-breakpoint">
+					<div class="ui-block-a">
+						<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal" disabled>
+							<legend>Temperatur-Abfall-Modus:</legend>
+							<input name="tempFallMode" id="optModeInactive{$value.peerId}" value="inactive" {if="$value.tempFallMode == 'inactive'"}checked="checked"{/if} type="radio">
+							<label for="optModeInactive{$value.peerId}">Aus</label>
+							<input name="tempFallMode" id="optTempFallModeAuto{$value.peerId}" value="auto" {if="$value.tempFallMode == 'auto'"}checked="checked"{/if} type="radio">
+							<label for="optTempFallModeAuto{$value.peerId}">Auto</label>
+							<input name="tempFallMode" id="optTempFallModeAutoManu{$value.peerId}" value="auto_manual" {if="$value.tempFallMode == 'auto_manual'"}checked="checked"{/if} type="radio">
+							<label for="optTempFallModeAutoManu{$value.peerId}">Manual</label>
+							<input name="tempFallMode" id="optTempFallModeAutoParty{$value.peerId}" value="auto_party" {if="$value.tempFallMode == 'auto_party'"}checked="checked"{/if} type="radio">
+							<label for="optTempFallModeAutoParty{$value.peerId}">Party</label>
+							<input name="tempFallMode" id="optTempFallModeActive{$value.peerId}" value="active" {if="$value.tempFallMode == 'active'"}checked="checked"{/if} type="radio">
+							<label for="optTempFallModeActive{$value.peerId}">An</label>
+						</fieldset>
+					</div>
+					<div class="ui-block-b">
+						<label for="tempFallTempSlider">Temperatur-Abfall-Temperatur:</label>
+						<input name="tempFallTemp" id="tempFallTempSlider" data-highlight="true" min="5" max="30" value="{$value.tempFallTemp}" type="range">
+					</div>
+					<div class="ui-block-c">
+						<label for="tempFallWindowSlider">Temperatur-Abfall-Zeitfenster:</label>
+						<input name="tempFallWindow" id="tempFallWindowSlider" data-highlight="true" min="1" max="99" value="{$value.tempFallWindow}" type="range">
+					</div>
+				</div>
+
 				</form>
 			</div>
 		</div>

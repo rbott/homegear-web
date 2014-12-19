@@ -13,6 +13,8 @@ class HomeMaticValve {
 	private $batteryState;
 	private $tempFallMode;
 	private $tempFallValue;
+	private $tempFallTemp;
+	private $tempFallWindow;
 
 	private $controlModes = array("auto", "manual", "party", "boost");
 	private $tempFallModes = array("inactive","auto","auto_manual","auto_party","active");
@@ -85,6 +87,16 @@ class HomeMaticValve {
 		return $this->tempFallValue;
 	}
 
+	function getTempFallTemp() {
+		$this->updateParameters();
+		return $this->tempFallTemp;
+	}
+
+	function getTempFallWindow() {
+		$this->updateParameters();
+		return $this->tempFallWindow;
+	}
+
 	function getTargetTemp() {
 		$this->targetTemp = $this->XMLRPC->send("getValue", array(intval($this->peerId), 4, "SET_TEMPERATURE", false));
 		return $this->targetTemp;
@@ -115,6 +127,8 @@ class HomeMaticValve {
 			$this->lastParamsetUpdate = time();
 			$this->tempFallMode = $params["TEMPERATUREFALL_MODUS"];
 			$this->tempFallValue = $params["TEMPERATUREFALL_VALUE"];
+			$this->tempFallTemp = $params["TEMPERATUREFALL_WINDOW_OPEN"];
+			$this->tempFallWindow = $params["TEMPERATUREFALL_WINDOW_OPEN_TIME_PERIOD"];
 		}
 	}
 }
