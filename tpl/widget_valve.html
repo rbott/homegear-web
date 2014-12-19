@@ -1,0 +1,70 @@
+<a name="peer{$value.peerId}"></a>
+		<div class="ui-corner-all custom-corners">
+			<div class="ui-bar ui-bar-a">
+				<img src="images/radiator-16.png" /><h3>{$value.name}</h3>
+			</div>
+			<div class="ui-body ui-body-a">
+				<div class="ui-grid-b ui-responsive">
+					<div class="ui-block-a"><div id="tempSensor{$value.peerId}" style="min-width: 180px; max-height: 160px;"></div></div>
+					<div class="ui-block-b"><div id="targetTemp{$value.peerId}" style="min-width: 180px; max-height: 160px;"></div></div>
+					<div class="ui-block-c"><div id="valveState{$value.peerId}" style="min-width: 180px; max-height: 160px;"></div></div>
+				</div>
+				<form method="POST" action="action.php" data-ajax="false">
+				<input type="hidden" name="peerId" id="peerID{$value.peerId}" value="{$value.peerId}">
+				<input type="hidden" name="method" id="method{$value.peerId}" value="updateValve">
+				<div class="ui-grid-b form-breakpoint">
+					<div class="ui-block-a">
+						<fieldset data-role="controlgroup" data-mini="true" data-type="horizontal">
+							<legend>Betriebsmodus:</legend>
+							<input name="mode" id="optModeAuto{$value.peerId}" value="auto" {if="$value.controlMode == 'auto'"}checked="checked"{/if} type="radio">
+							<label for="optModeAuto{$value.peerId}">Auto</label>
+							<input name="mode" id="optModeManual{$value.peerId}" value="manual" {if="$value.controlMode == 'manual'"}checked="checked"{/if} type="radio">
+							<label for="optModeManual{$value.peerId}">Manual</label>
+							<input name="mode" id="optModeParty{$value.peerId}" value="party" {if="$value.controlMode == 'party'"}checked="checked"{/if} type="radio">
+							<label for="optModeParty{$value.peerId}">Party</label>
+							<input name="mode" id="optModeBoost{$value.peerId}" value="boost" {if="$value.controlMode == 'boost'"}checked="checked"{/if} type="radio">
+							<label for="optModeBoost{$value.peerId}">Boost</label>
+						</fieldset>
+					</div>
+					<div class="ui-block-b">
+						<label for="targetTempSlider">SOLL-Temperatur:</label>
+						<input name="targetTemp" id="targetTempSlider" data-highlight="true" min="5" max="30" value="{$value.targetTemp}" type="range">
+					</div>
+					<div class="ui-block-c">
+						<input value="Aktualisieren" type="submit">
+					</div>
+				</div>
+				</form>
+			</div>
+		</div>
+		<script type="text/javascript">
+
+		$( document).ready(function() {
+			var GageSensor{$value.peerId} = new JustGage({
+				id: "tempSensor{$value.peerId}", 
+				value: "{$value.tempSensor}", 
+				min: 5,
+				max: 30,
+				title: "Raum-Temperatur (IST)",
+				label: "°C"
+			});
+			var GageTarget{$value.peerId} = new JustGage({
+				id: "targetTemp{$value.peerId}", 
+				value: "{$value.targetTemp}", 
+				min: 5,
+				max: 30,
+				title: "Raum-Temperatur (SOLL)",
+				label: "°C"
+			});
+			var GageValve{$value.peerId} = new JustGage({
+				id: "valveState{$value.peerId}", 
+				value: "{$value.valveState}", 
+				min: 0,
+				max: 100,
+				title: "Ventilöffnung",
+				label: "%"
+			});
+
+		});
+
+		</script>

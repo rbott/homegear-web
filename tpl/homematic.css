@@ -1,0 +1,10 @@
+@media all and (max-width: 80em) {
+	.form-breakpoint .ui-block-a,
+	.form-breakpoint .ui-block-b,
+	.form-breakpoint .ui-block-c,
+	.form-breakpoint .ui-block-d,
+	.form-breakpoint .ui-block-e {
+		width: 100%;
+		float: none;
+	}
+}
