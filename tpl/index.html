@@ -7,33 +7,20 @@
 <meta charset="UTF-8">
 
 <link rel="stylesheet" href="jquery-mobile/jquery.mobile-1.4.5.min.css" />
+<link rel="stylesheet" href="jquery.dynameter-0.5.6/jquery.dynameter-0.5.6.min.css" />
 <link rel="stylesheet" href="homematic.css" />
 <script src="jquery-mobile/jquery-1.11.1.min.js"></script>
 <script src="jquery-mobile/jquery.mobile-1.4.5.min.js"></script>
-<script src="justgage/raphael.2.1.0.min.js"></script>
-<script src="justgage/justgage.1.0.1.min.js"></script>
+<script src="jquery.dynameter-0.5.6/raphael.2.1.2.min.js"></script>
+<script src="jquery.dynameter-0.5.6/jquery.dynameter-0.5.6.min.js"></script>
+<script src="page-nav.js"></script>
 </head>
 <body>
 
-<div data-role="page">
-
-	<div data-role="header">
-		<h1>HomeMatic Control</h1>
-	</div><!-- /header -->
-
-	<div role="main" class="ui-content">
-	{loop="deviceList"}
-	{if="$value.type == 'valve'"}  {include="widget_valve"}
-	{elseif="$value.type == 'envsensor'"} {include="widget_envsensor"}
-	{/if}
-		<br />
-	{/loop}
-	</div><!-- /content -->
-
-	<div data-role="footer">
-		<h4>Page Footer</h4>
-	</div><!-- /footer -->
-</div><!-- /page -->
-
+{loop="deviceList"}
+{if="$value.type == 'valve'"}  {include="widget_valve"}
+{elseif="$value.type == 'envsensor'"} {include="widget_envsensor"}
+{/if}
+{/loop}
 </body>
 </html>
