@@ -1,9 +1,11 @@
 <?php
 
+$BASEPATH = realpath(dirname(__FILE__));
+
 include_once("/var/lib/homegear/scripts/HM-XMLRPC-Client/Client.php");
-include_once("includes/class.device.valve.php");
-include_once("includes/class.device.envsensor.php");
-include_once("includes/class.meta.tempset.php");
+include_once($BASEPATH . "/class.device.valve.php");
+include_once($BASEPATH . "/class.device.envsensor.php");
+include_once($BASEPATH . "/class.meta.tempset.php");
 
 class HomeMaticInstance
 {
