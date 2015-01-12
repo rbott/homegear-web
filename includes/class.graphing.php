@@ -94,7 +94,7 @@ class HomeMaticGraphing
 
 	function drawTempGraph($period,$deviceList = array()) {
 		$options = $this->tempGraphOptions;
-		$options[] = "--title=Temperatures";
+		$options[] = "--title=Temperatures (" . $period . ")";
 		$options[] = "--vertical-label=Celsius";
 		$options[] = "--start";
 		$options[] = $this->graphPeriods[$period];
@@ -112,7 +112,7 @@ class HomeMaticGraphing
 				}
 				if(isset($device["tempSensor"]) && file_exists($rrdPath)) {
 					$options[] = "DEF:temp" . $i . "=" . $rrdPath . ":temp:AVERAGE";
-					$options[] = "LINE1:temp" . $i . $this->getColor() . ":" . $device["name"];
+					$options[] = "LINE2:temp" . $i . $this->getColor() . ":" . $device["name"];
 					$options[] = "GPRINT:temp" . $i . ":AVERAGE:%2.1lf°C";
 					$options[] = "COMMENT:\\n";
 					$i++;
@@ -127,7 +127,7 @@ class HomeMaticGraphing
 
 	function drawValveGraph($period,$deviceList = array()) {
 		$options = $this->tempGraphOptions;
-		$options[] = "--title=Valve States";
+		$options[] = "--title=Valve States (" . $period . ")";
 		$options[] = "--vertical-label=%";
 		$options[] = "--start";
 		$options[] = $this->graphPeriods[$period];
@@ -139,7 +139,7 @@ class HomeMaticGraphing
 				$rrdPath = "graphs/valves/peer_" . $device["peerId"] . ".rrd";
 				if(isset($device["valveState"]) && file_exists($rrdPath)) {
 					$options[] = "DEF:valve" . $i . "=" . $rrdPath . ":valve:AVERAGE";
-					$options[] = "LINE1:valve" . $i . $this->getColor() . ":" . $device["name"];
+					$options[] = "LINE2:valve" . $i . $this->getColor() . ":" . $device["name"];
 					$options[] = "GPRINT:valve" . $i . ":AVERAGE:%2.1lf%%";
 					$options[] = "COMMENT:\\n";
 					$i++;
