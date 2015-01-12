@@ -8,17 +8,17 @@ class HomeMaticGraphing
 		"--step", "60",
 		"DS:temp:GAUGE:120:-20:40",
 		"DS:valve:GAUGE:120:0:100",
-		"RRA:AVERAGE:0.5:1:1440",
-		"RRA:AVERAGE:0.5:12:168",
-		"RRA:AVERAGE:0.5:228:365",
+		"RRA:LAST:0.5:1:1440",
+		"RRA:LAST:0.5:12:168",
+		"RRA:LAST:0.5:228:365",
 	);
 	private $envSensorRrdOptions = array(
 		"--step", "60",
 		"DS:temp:GAUGE:120:-20:40",
 		"DS:humidity:GAUGE:120:0:100",
-		"RRA:AVERAGE:0.5:1:1440",
-		"RRA:AVERAGE:0.5:12:168",
-		"RRA:AVERAGE:0.5:228:365",
+		"RRA:LAST:0.5:1:1440",
+		"RRA:LAST:0.5:12:168",
+		"RRA:LAST:0.5:228:365",
 	);
 	private $tempGraphOptions = array(
 		"--slope-mode",
@@ -111,9 +111,9 @@ class HomeMaticGraphing
 					break;
 				}
 				if(isset($device["tempSensor"]) && file_exists($rrdPath)) {
-					$options[] = "DEF:temp" . $i . "=" . $rrdPath . ":temp:AVERAGE";
+					$options[] = "DEF:temp" . $i . "=" . $rrdPath . ":temp:LAST";
 					$options[] = "LINE2:temp" . $i . $this->getColor() . ":" . $device["name"];
-					$options[] = "GPRINT:temp" . $i . ":AVERAGE:%2.1lf°C";
+					$options[] = "GPRINT:temp" . $i . ":LAST:%2.1lf°C";
 					$options[] = "COMMENT:\\n";
 					$i++;
 				}
@@ -138,9 +138,9 @@ class HomeMaticGraphing
 			if($device["type"] == "valve" && (empty($deviceList) || in_array($device["peerId"],$deviceList))) {
 				$rrdPath = "graphs/valves/peer_" . $device["peerId"] . ".rrd";
 				if(isset($device["valveState"]) && file_exists($rrdPath)) {
-					$options[] = "DEF:valve" . $i . "=" . $rrdPath . ":valve:AVERAGE";
+					$options[] = "DEF:valve" . $i . "=" . $rrdPath . ":valve:LAST";
 					$options[] = "LINE2:valve" . $i . $this->getColor() . ":" . $device["name"];
-					$options[] = "GPRINT:valve" . $i . ":AVERAGE:%2.1lf%%";
+					$options[] = "GPRINT:valve" . $i . ":LAST:%2.1lf%%";
 					$options[] = "COMMENT:\\n";
 					$i++;
 				}
@@ -165,9 +165,9 @@ class HomeMaticGraphing
 			if($device["type"] == "envsensor" && (empty($deviceList) || in_array($device["peerId"],$deviceList))) {
 				$rrdPath = "graphs/sensors/peer_" . $device["peerId"] . ".rrd";
 				if(isset($device["humidSensor"]) && file_exists($rrdPath)) {
-					$options[] = "DEF:humidity" . $i . "=" . $rrdPath . ":humidity:AVERAGE";
+					$options[] = "DEF:humidity" . $i . "=" . $rrdPath . ":humidity:LAST";
 					$options[] = "LINE2:humidity" . $i . $this->getColor() . ":" . $device["name"];
-					$options[] = "GPRINT:humidity" . $i . ":AVERAGE:%2.1lf%%";
+					$options[] = "GPRINT:humidity" . $i . ":LAST:%2.1lf%%";
 					$options[] = "COMMENT:\\n";
 					$i++;
 				}
