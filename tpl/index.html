@@ -16,11 +16,11 @@
 <script src="page-nav.js"></script>
 </head>
 <body>
-
 {loop="deviceList"}
 {if="$value.type == 'valve'"}  {include="widget_valve"}
 {elseif="$value.type == 'envsensor'"} {include="widget_envsensor"}
 {/if}
 {/loop}
+{include="widget_graphs"}
 </body>
 </html>
