@@ -1,7 +1,7 @@
 <?php
 
-include_once('includes/homematic.php');
-include_once('includes/class.graphing.php');
+include_once('/var/www/includes/homematic.php');
+include_once('/var/www/includes/class.graphing.php');
 $hm = new HomeMaticInstance;
 $hg = new HomeMaticGraphing($hm);
 

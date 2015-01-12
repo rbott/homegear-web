@@ -104,10 +104,10 @@ class HomeMaticGraphing
 			if(empty($deviceList) || in_array($device["peerId"],$deviceList)) {
 				switch($device["type"]) {
 				case "valve":
-					$rrdPath = "graphs/valves/peer_" . $device["peerId"] . ".rrd";
+					$rrdPath = $this->rrdBasePath . "valves/peer_" . $device["peerId"] . ".rrd";
 					break;
 				case "envsensor":
-					$rrdPath = "graphs/sensors/peer_" . $device["peerId"] . ".rrd";
+					$rrdPath = $this->rrdBasePath . "sensors/peer_" . $device["peerId"] . ".rrd";
 					break;
 				}
 				if(isset($device["tempSensor"]) && file_exists($rrdPath)) {
@@ -136,7 +136,7 @@ class HomeMaticGraphing
 		$this->colorIndex = 0;
 		foreach($this->devices AS $device) {
 			if($device["type"] == "valve" && (empty($deviceList) || in_array($device["peerId"],$deviceList))) {
-				$rrdPath = "graphs/valves/peer_" . $device["peerId"] . ".rrd";
+				$rrdPath = $this->rrdBasePath . "valves/peer_" . $device["peerId"] . ".rrd";
 				if(isset($device["valveState"]) && file_exists($rrdPath)) {
 					$options[] = "DEF:valve" . $i . "=" . $rrdPath . ":valve:LAST";
 					$options[] = "LINE2:valve" . $i . $this->getColor() . ":" . $device["name"];
@@ -163,7 +163,7 @@ class HomeMaticGraphing
 		$this->colorIndex = 0;
 		foreach($this->devices AS $device) {
 			if($device["type"] == "envsensor" && (empty($deviceList) || in_array($device["peerId"],$deviceList))) {
-				$rrdPath = "graphs/sensors/peer_" . $device["peerId"] . ".rrd";
+				$rrdPath = $this->rrdBasePath . "sensors/peer_" . $device["peerId"] . ".rrd";
 				if(isset($device["humidSensor"]) && file_exists($rrdPath)) {
 					$options[] = "DEF:humidity" . $i . "=" . $rrdPath . ":humidity:LAST";
 					$options[] = "LINE2:humidity" . $i . $this->getColor() . ":" . $device["name"];
