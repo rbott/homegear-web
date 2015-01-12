@@ -9,6 +9,7 @@ $periods = array ("hourly", "daily", "weekly", "monthly", "yearly");
 foreach($periods AS $period) {
 	$hg->drawTempGraph($period);
 	$hg->drawValveGraph($period);
+	$hg->drawHumidityGraph($period);
 }
 
 ?>

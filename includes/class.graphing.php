@@ -152,6 +152,33 @@ class HomeMaticGraphing
 		}
 	}
 
+	function drawHumidityGraph($period,$deviceList = array()) {
+		$options = $this->tempGraphOptions;
+		$options[] = "--title=Humidity (" . $period . ")";
+		$options[] = "--vertical-label=%";
+		$options[] = "--start";
+		$options[] = $this->graphPeriods[$period];
+		$options[] = "--upper-limit=100";
+		$i = 0;
+		$this->colorIndex = 0;
+		foreach($this->devices AS $device) {
+			if($device["type"] == "envsensor" && (empty($deviceList) || in_array($device["peerId"],$deviceList))) {
+				$rrdPath = "graphs/sensors/peer_" . $device["peerId"] . ".rrd";
+				if(isset($device["humidSensor"]) && file_exists($rrdPath)) {
+					$options[] = "DEF:humidity" . $i . "=" . $rrdPath . ":humidity:AVERAGE";
+					$options[] = "LINE2:humidity" . $i . $this->getColor() . ":" . $device["name"];
+					$options[] = "GPRINT:humidity" . $i . ":AVERAGE:%2.1lf%%";
+					$options[] = "COMMENT:\\n";
+					$i++;
+				}
+			}
+		}
+		if(!rrd_graph($this->rrdBasePath . "output/all_humidity_" . $period . ".gif",$options)) {
+			echo "RRD ERROR: " . rrd_error() . "\n";
+			print_r($options);
+		}
+	}
+
 	function getColor() {
 		$color = $this->colors[$this->colorIndex];
 		if($this->colorIndex <= (count($this->colors)-1)) {
