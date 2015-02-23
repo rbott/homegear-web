@@ -7,6 +7,7 @@ class HomeMaticGraphing
 	private $valveRrdOptions = array(
 		"--step", "60",
 		"DS:temp:GAUGE:120:-20:40",
+		"DS:configuredTemp:GAUGE:120:-20:40",
 		"DS:valve:GAUGE:120:0:100",
 		"RRA:LAST:0.5:1:1440",
 		"RRA:LAST:0.5:12:168",
@@ -73,7 +74,7 @@ class HomeMaticGraphing
 			case "valve":
 				$rrdPath = $this->rrdBasePath . "valves/peer_" . $device["peerId"] . ".rrd";
 				if(file_exists($rrdPath)) {
-					$options = array( sprintf("%d:%d:%d",$timeStampNow,$device["tempSensor"],$device["valveState"]));
+					$options = array( sprintf("%d:%d:%d:%d",$timeStampNow,$device["tempSensor"],$device["targetTemp"],$device["valveState"]));
 					if(!rrd_update($rrdPath,$options)) {
 						echo "RRD ERROR:" . rrd_error() . "\n";
 					}
@@ -174,6 +175,39 @@ class HomeMaticGraphing
 			}
 		}
 		if(!rrd_graph($this->rrdBasePath . "output/all_humidity_" . $period . ".gif",$options)) {
+			echo "RRD ERROR: " . rrd_error() . "\n";
+			print_r($options);
+		}
+	}
+
+	function drawCurrentVsActualTempGraph($period,$peerId) {
+		$options = $this->tempGraphOptions;
+		$options[] = "--title=Actual Temp vs. Configured Temp on Peer " . $peerId . " (" . $period . ")";
+		$options[] = "--vertical-label=°C";
+		$options[] = "--start";
+		$options[] = $this->graphPeriods[$period];
+		$options[] = "--upper-limit=30";
+		$i = 0;
+		$this->colorIndex = 0;
+		foreach($this->devices AS $device) {
+			if($device["type"] == "valve" && intval($device["peerId"]) == intval($peerId)) {
+				$rrdPath = $this->rrdBasePath . "valves/peer_" . $device["peerId"] . ".rrd";
+				if(isset($device["tempSensor"]) && file_exists($rrdPath)) {
+					$options[] = "DEF:temp" . $i . "=" . $rrdPath . ":temp:LAST";
+					$options[] = "LINE2:temp" . $i . $this->getColor() . ": Actual Temperature";
+					$options[] = "GPRINT:temp" . $i . ":LAST:%2.1lf°C";
+					$options[] = "DEF:configuredTemp" . $i . "=" . $rrdPath . ":configuredTemp:LAST";
+					$options[] = "LINE2:configuredTemp" . $i . $this->getColor() . ": Configured Temperature";
+					$options[] = "GPRINT:configuredTemp" . $i . ":LAST:%2.1lf°C";
+					$options[] = "COMMENT:\\n";
+					$i++;
+				}
+			}
+		}
+		if($i == 0) {
+			$options[] = "ERROR: Device " . $peerId . " not found or not a valve!";
+		}
+		if(!rrd_graph($this->rrdBasePath . "output/" . $peerId . "_CurrentVsActual_" . $period . ".gif",$options)) {
 			echo "RRD ERROR: " . rrd_error() . "\n";
 			print_r($options);
 		}

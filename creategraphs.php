@@ -10,6 +10,11 @@ foreach($periods AS $period) {
 	$hg->drawTempGraph($period);
 	$hg->drawValveGraph($period);
 	$hg->drawHumidityGraph($period);
+	foreach($hm->getAllDevices() AS $device) {
+		if($device["type"] == "valve") {
+			$hg->drawCurrentVsActualTempGraph($period,$device["peerId"]);
+		}
+	}
 }
 
 ?>
