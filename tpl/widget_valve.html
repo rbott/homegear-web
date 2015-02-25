@@ -64,6 +64,11 @@
 				</div>
 
 				</form>
+				<div class="ui-grid-b ui-responsive">
+					<div class="ui-block-a"><img src="../graphs/output/{$value.peerId}_CurrentVsActual_daily.gif" style="max-width: 100%" ></div>
+					<div class="ui-block-b"><img src="../graphs/output/{$value.peerId}_CurrentVsActual_monthly.gif" style="max-width: 100%" ></div>
+					<div class="ui-block-c"><img src="../graphs/output/{$value.peerId}_CurrentVsActual_yearly.gif" style="max-width: 100%"></div>
+				</div>
 		<script type="text/javascript">
 
 		$(document).on( "pageinit", "#peer{$value.peerId}", function(event, ui) {
