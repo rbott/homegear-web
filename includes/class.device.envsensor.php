@@ -14,7 +14,7 @@ class HomeMaticEnvSensors {
 		$this->XMLRPC = $xmlrpc;
 		$this->address = $address;
 		$this->channels = $channels;
-		$peerId = $this->XMLRPC->send("getPeerId",$address);
+		$peerId = $this->XMLRPC->send("getPeerId",array(1,$address));
 		$this->peerId = $peerId[0];
 		$name = $this->XMLRPC->send("getDeviceInfo", array(intval($this->peerId),array('NAME')));
 		$this->name = $name["NAME"];
