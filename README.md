@@ -34,7 +34,7 @@ This is somewhat untested, as I have not done any other setups than my own homeb
  
 # TODO
 homegear-web is far away from being complete. Several features are even outright broken (aka have not been finished yet). But for the most part, they are just missing in the frontend. Here is an incomplete list:
-* German-only interface
+* interface is German-only right now
 * you can not set anything else besides the temperature on a valve (although the buttons might suggest something else)
 * graphs should be drawn 'on demand'
 * it is not possible view a custom timespan for a graph (currently only daily, weekly, monthly)
