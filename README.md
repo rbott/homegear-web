@@ -40,6 +40,7 @@ homegear-web is far away from being complete. Several features are even outright
 * it is not possible view a custom timespan for a graph (currently only daily, weekly, monthly)
 * it is not possible to apply a given setting (e.g. temperature) to all valves at the same time
 * handle POST requests correctly with jquery-mobile
+* store tempsets (time schedules for temperature settings) on valves - there is some experimental work here in the backend but that's about it
 
 # Disclaimer
 homegear-weg is developed for personal use only. As I am not a professional developer, the code is rather...messy. However, if you have anything to contribute or improve, feel free to submit a pull request :-)
