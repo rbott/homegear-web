@@ -16,11 +16,12 @@ function sendPushMessage($pushMessage,$apiUrl,$apiToken,$apiUser) {
 }
 
 # basic variables
-include("pushover-config.php");
+$BASE_PATH = realpath(dirname(__FILE__));
+include($BASE_PATH . "/../config/pushover-config.php");
 $lastAvgValueFile = "/tmp/average-temp.txt";
 
 # homegear stuff
-include_once('includes/homematic.php');
+include_once($BASE_PATH . "/../includes/homematic.php");
 $home = new HomeMaticInstance;
 $devices = $home->getAllDevices(true);
 

@@ -1,7 +1,8 @@
 <?php
 
-include_once('/var/www/includes/homematic.php');
-include_once('/var/www/includes/class.graphing.php');
+$BASE_PATH = realpath(dirname(__FILE__));
+include_once($BASE_PATH . '/../includes/homematic.php');
+include_once($BASE_PATH . '/../includes/class.graphing.php');
 $hm = new HomeMaticInstance;
 $hg = new HomeMaticGraphing($hm);
 
