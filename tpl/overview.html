@@ -1,0 +1,53 @@
+{% extends "index.html" %}
+
+{% block content %}
+<div class="container">
+	<div class="row">
+		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+			<div class="panel panel-default settings-box">
+				<div class="panel-heading"><h5>Set Temperature for all Valves</h5></div>
+				<div class="panel-body">
+					<form method="POST" action="setAllTemp">
+						<div class="form-group">
+							<div class="input-group">	
+								<span class="input-group-addon" id="basic-temp">°C</span>
+								<input type="text" class="form-control" name="targetTemp" id="targetTemp" placeholder="17" aria-describedby="basic-temp">
+							</div>
+						</div>
+						<button type="submit" class="btn btn-default">Set Temperature</button>
+					</form>		
+				</div>
+			</div>	    
+		</div>
+{% for device in devices %}
+		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+			<div class="panel panel-default settings-box">
+				<div class="panel-heading"><div><h5>{{ device.name }}{% if device.targetTemp %} <span class="label label-success">{{ device.valveState }}%</span>{% endif %}</h5></div></div>
+				<div class="panel-body">
+					<div class="progress">
+						<div class="progress-bar" role="progressbar" aria-valuenow="{{ device.tempSensor }}" aria-valuemin="0" aria-valuemax="30" style="width: {{ device.tempSensor / 30 * 100  }}%">
+							Temp: {{ device.tempSensor }}°C
+						</div>
+					</div>
+{% if device.humidSensor %}					<div class="progress">
+						<div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="{{ device.humidSensor }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ device.humidSensor }}%">
+							Humidity: {{ device.humidSensor }}%
+						</div>
+					</div>{% endif %}
+{% if device.targetTemp %}					<form method="POST" action="/setTemp">
+						<div class="form-group">
+							<div class="input-group">	
+								<span class="input-group-addon" id="basic-temp">°C</span>
+								<input type="text" class="form-control" name="targetTemp" id="targetTemp" placeholder="17" value="{{ device.targetTemp }}" aria-describedby="basic-temp">
+							</div>
+							<input type="hidden" name="peerId" value="{{ device.peerId }}" />
+						</div>
+						<button type="submit" class="btn btn-default">Set Temperature</button>
+					</form>{% endif %}
+				</div>
+			</div>	    
+		</div>
+{% endfor %}
+	</div>
+</div>
+{% endblock %}
