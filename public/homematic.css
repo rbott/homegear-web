@@ -2,4 +2,13 @@
 	min-height: 200px;
 }
 
+.rangeslider {
+	display: inline-block;
+	width: 70%;
+}
 
+.output {
+	display: inline-block;
+	padding-left: 10px;
+	line-height: 1;
+}

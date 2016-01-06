@@ -41,19 +41,25 @@ $app->get('/overview', function() use ($app) {
 	$app->render('overview.html', array("devices" => $devices,));
 });
 
+$app->get('/control', function() use ($app) {
+	$site = new homeMaticInstance();
+	$devices = $site->getAllDevices(true);
+	$app->render('control.html', array("devices" => $devices,));
+});
+
 $app->post('/setTemp', function() use ($app) {
 	$site = new homeMaticInstance();
 	if($valve = $site->getValveByPeerId($_POST["peerId"])) {
 		$valve->setTargetTemp(floatval($_POST["targetTemp"]));
 	}
-	Header("Location: /overview");
+	Header("Location: /control");
 	exit;
 });
 
 $app->post('/setAllTemp', function() use ($app) {
 	$site = new homeMaticInstance();
 	$site->setTargetTemperature(floatval($_POST["targetTemp"]));
-	Header("Location: /overview");
+	Header("Location: /control");
 	exit;
 });
 
