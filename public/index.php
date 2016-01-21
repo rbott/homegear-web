@@ -63,6 +63,13 @@ $app->post('/setAllTemp', function() use ($app) {
 	exit;
 });
 
+$app->get('/valveDetails/:h', function($peerId) use ($app) {
+	$site = new homeMaticInstance();
+	$device = $site->getValveByPeerId($peerId);
+	$app->render('valveDetails.html', array("device" => $device,));
+});
+
+
 $app->run();
 
 ?>
