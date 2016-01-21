@@ -74,6 +74,10 @@ $app->get('/valveDetails/:h', function($peerId) use ($app) {
 });
 
 
+$app->get('/showGraphs', function() use ($app) {
+	$app->render('showgraphs.html', array());
+});
+
 $app->run();
 
 ?>
