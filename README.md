@@ -1,7 +1,7 @@
 # homegear-web
 simple homegear web interface with additional scripts
 
-Use this simple web interface to display HomeMatic valves (HM-CC-RT-DN) and temperature sensors (HM-WDS40-TH-I-2) paired with a homegear installation. It uses jquery-mobile and is therefore focused on mobile devices (e.g. you can swipe between views) but works reasonably well on larger screens as well.
+Use this simple web interface to display HomeMatic valves (HM-CC-RT-DN) and temperature sensors (HM-WDS40-TH-I-2) paired with a homegear installation. Coming from raintpl and jquery-mobile, I switched to Slim/Twig and Bootstrap/jQuery.
 Additionally, it stores data collected from valves and sensors in RRD files and displays graphs. There is also a simple notification option for abnormal events (e.g. high temperature) via Pushover service.
 
 # requirements
@@ -15,7 +15,7 @@ Additionally, it stores data collected from valves and sensors in RRD files and 
 This is somewhat untested, as I have not done any other setups than my own homebox so far.
 * install the requirements as mentioned above - I will not go into detail here about the homegear setup
 * since my scripts use the XMLRPC API, homegear does not nessecarily have to be installed on the same system. However, the scripts currently rely on the XML RPC Client shipped with homegear (/var/lib/homegear/scripts/HM-XMLRPC-Client/Client.php)
-* clone this repository to /var/www (or any other convenient location) and configure your webserver accordingly
+* clone this repository to /var/www (or any other convenient location) and configure your webserver to point to the public/ sub-directory
 
  # rrd graphs
  * you need to setup two cronjobs to have this working:
@@ -34,12 +34,8 @@ This is somewhat untested, as I have not done any other setups than my own homeb
  
 # TODO
 homegear-web is far away from being complete. Several features are even outright broken (aka have not been finished yet). But for the most part, they are just missing in the frontend. Here is an incomplete list:
-* interface is German-only right now
-* you can not set anything else besides the temperature on a valve (although the buttons might suggest something else)
 * graphs should be drawn 'on demand'
 * it is not possible view a custom timespan for a graph (currently only daily, weekly, monthly)
-* it is not possible to apply a given setting (e.g. temperature) to all valves at the same time
-* handle POST requests correctly with jquery-mobile
 * store tempsets (time schedules for temperature settings) on valves - there is some experimental work here in the backend but that's about it
 
 # Disclaimer
