@@ -3,18 +3,29 @@
 {% block content %}
 <div class="container">
 	<div class="row">
-		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 			<div class="panel panel-default settings-box">
-				<div class="panel-heading">Set Temperature for all Valves</div>
+				<div class="panel-heading">Set Temperature for all/selected Valves</div>
 				<div class="panel-body">
 					<form method="POST" action="setAllTemp">
 						<div class="form-group">
-							<div class="input-group">	
-								<span class="input-group-addon" id="basic-temp">°C</span>
-								<input type="text" class="form-control" name="targetTemp" id="targetTemp" placeholder="17" aria-describedby="basic-temp">
+							<input type="range" min="12" max="29" step="1" name="targetTemp" value="17" data-rangeslider />
+							<output class="output"></output>
+						</div>
+						<div class="row">
+{% for device in devices %}
+{% if device.type == "valve" %}
+								<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+									<div class="checkbox"><label><input type="checkbox" name="valves[]" checked value="{{ device.peerId }}">{{ device.name }}</label></div>
+								</div>
+{% endif %}
+{% endfor %}
+						</div>
+						<div class="row">
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+								<button type="submit" class="btn btn-default">Set Temperature</button>
 							</div>
 						</div>
-						<button type="submit" class="btn btn-default">Set Temperature</button>
 					</form>		
 				</div>
 			</div>	    

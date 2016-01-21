@@ -58,7 +58,11 @@ $app->post('/setTemp', function() use ($app) {
 
 $app->post('/setAllTemp', function() use ($app) {
 	$site = new homeMaticInstance();
-	$site->setTargetTemperature(floatval($_POST["targetTemp"]));
+	if(is_array($_POST["valves"])) {
+		foreach($_POST["valves"] AS $peerId) {
+			$site->setTargetTemperature(floatval($_POST["targetTemp"]), intval($peerId));
+		}
+	}
 	Header("Location: /control");
 	exit;
 });
