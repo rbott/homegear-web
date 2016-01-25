@@ -12,6 +12,7 @@ class HomeMaticInstance
 	private $XMLRPC;
 	private $valves = array();
 	private $envSensors = array();
+	private $peeringTimeout = -1;
 
 	function HomeMaticInstance() {
 		$host = "localhost";
@@ -32,6 +33,27 @@ class HomeMaticInstance
 				}
 			}
 		}
+	}
+
+	function isPeering() {
+		$peeringMode = $this->XMLRPC->send("getInstallMode", array());
+		if($peeringMode == 0) {
+			$this->peeringTimeout = 0;
+			return false;
+		}
+		else {
+			$this->peeringTimeout = $peeringMode;
+			return true;
+		}
+	}
+
+	function getPeeringTimeout() {
+		$this->isPeering();
+		return $this->peeringTimeout;
+	}
+
+	function setPeeringMode() {
+		$this->XMLRPC->send("setInstallMode", array(true));
 	}
 
 	function getValveNames() {
@@ -74,11 +96,15 @@ class HomeMaticInstance
 			if(!$withState) {
 				$devices[] = array( "name" => $valve->getName(),
 						"peerId" => $valve->getPeerId(),
+						"address" => $valve->getAddress(),
+						"typeString" => $valve->getTypeString(),
 						"type" => "valve");
 			}
 			else {
 				$devices[] = array( "name" => $valve->getName(),
 						"peerId" => $valve->getPeerId(),
+						"address" => $valve->getAddress(),
+						"typeString" => $valve->getTypeString(),
 						"type" => "valve",
 						"valveState" => $valve->getValveState(),
 						"tempSensor" => $valve->getTempSensor(),
@@ -92,12 +118,16 @@ class HomeMaticInstance
 		foreach($this->envSensors AS $sensor) {
 			if(!$withState) {
 				$devices[] = array( "name" => $sensor->getName(),
-						"peerId" => $valve->getPeerId(),
+						"peerId" => $sensor->getPeerId(),
+						"address" => $sensor->getAddress(),
+						"typeString" => $sensor->getTypeString(),
 						"type" => "envsensor");
 			}
 			else {
 				$devices[] = array( "name" => $sensor->getName(),
 						"peerId" => $sensor->getPeerId(),
+						"address" => $sensor->getAddress(),
+						"typeString" => $sensor->getTypeString(),
 						"type" => "envsensor",
 						"tempSensor" => $sensor->getTempSensor(),
 						"humidSensor" => $sensor->getHumidSensor());

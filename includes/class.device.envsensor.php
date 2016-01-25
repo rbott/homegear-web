@@ -5,6 +5,7 @@ class HomeMaticEnvSensors {
 	private $address;
 	private $channels;
 	private $peerId;
+	private $typeString;
 	private $name;
 	private $tempSensor;
 	private $humidSensors;
@@ -16,6 +17,8 @@ class HomeMaticEnvSensors {
 		$this->channels = $channels;
 		$peerId = $this->XMLRPC->send("getPeerId",array(1,$address));
 		$this->peerId = $peerId[0];
+		$peerData = $this->XMLRPC->send("getDeviceDescription", array(intval($this->peerId),0));
+		$this->typeString = $peerData["PARENT_TYPE"];
 		$name = $this->XMLRPC->send("getDeviceInfo", array(intval($this->peerId),array('NAME')));
 		$this->name = $name["NAME"];
 	}
@@ -30,6 +33,10 @@ class HomeMaticEnvSensors {
 
 	function getPeerId() {
 		return $this->peerId;
+	}
+
+	function getTypeString() {
+		return $this->typeString;
 	}
 
 	function getTempSensor() {

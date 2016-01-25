@@ -1,0 +1,43 @@
+{% extends "index.html" %}
+
+{% block content %}
+<div class="container">
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<div class="panel panel-default settings-box">
+				<div class="panel-heading">Peers List</div>
+				<div class="panel-body">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<tr>
+								<th>ID</th>
+								<th>Peer Name</th>
+								<th>Address/Serial</th>
+								<th>Type</th>
+							</tr>
+{% for device in devices %}
+							<tr>
+								<td>{{ device.peerId }}</td>
+								<td>{{ device.name }}</td>
+								<td>{{ device.address }}</td>
+								<td>{{ device.typeString }}</td>
+							</tr>
+{% endfor %}	
+						</table>
+						</div>
+					</div>
+					{% if peeringStatus %}
+					<div class="text-center alert alert-warning" role="alert">
+						Peering Active, Remaining Seconds: {{ peeringTimeout }}
+					</p>
+						{% else %}
+					<div class="form-group text-center">
+						<form method="POST" action="/enablePeering"><input type="submit" class="btn btn-primary" name="enablePeering" value="Activate Peering (60 seconds)"></form>
+					</div>
+						{% endif %}
+				</div>
+			</div>	    
+		</div>
+	</div>
+</div>
+{% endblock %}

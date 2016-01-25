@@ -78,6 +78,23 @@ $app->get('/showGraphs', function() use ($app) {
 	$app->render('showgraphs.html', array());
 });
 
+$app->get('/showPeers', function() use ($app) {
+	$site = new homeMaticInstance();
+	$devices = $site->getAllDevices();
+	$peeringStatus = $site->isPeering();
+	$peeringTimeout = $site->getPeeringTimeout();
+	$app->render('showpeers.html', array("devices" => $devices, "peeringStatus" => $peeringStatus, "peeringTimeout" => $peeringTimeout));
+});
+
+$app->post('/enablePeering', function() use ($app) {
+	$site = new homeMaticInstance();
+	if(isset($_POST["enablePeering"])) {
+		$site->setPeeringMode();
+	}
+	Header("Location: /showPeers");
+	exit;
+});
+
 $app->run();
 
 ?>
