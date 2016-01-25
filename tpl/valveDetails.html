@@ -26,6 +26,27 @@
 					</form>
 				</div>
 			</div>	    
+			<div class="panel panel-default settings-box">
+				<div class="panel-heading">Valve Graphs</div>
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+							<a href="/graphs/{{ device.peerId }}_CurrentVsActual_daily.gif"><img class="img-responsive" src="/graphs/{{ device.peerId }}_CurrentVsActual_daily.gif" /></a>
+						</div>
+						<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+							<a href="/graphs/{{ device.peerId }}_CurrentVsActual_weekly.gif"><img class="img-responsive" src="/graphs/{{ device.peerId }}_CurrentVsActual_weekly.gif" /></a>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+							<a href="/graphs/{{ device.peerId }}_CurrentVsActual_monthly.gif"><img class="img-responsive" src="/graphs/{{ device.peerId }}_CurrentVsActual_monthly.gif" /></a>
+						</div>
+						<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+							<a href="/graphs/{{ device.peerId }}_CurrentVsActual_yearly.gif"><img class="img-responsive" src="/graphs/{{ device.peerId }}_CurrentVsActual_yearly.gif" /></a>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 {% endblock %}
