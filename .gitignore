@@ -1,3 +1,4 @@
 munin
 config/*.php
+config/*.cfg
 test.php
