@@ -25,6 +25,13 @@ include_once($BASE_PATH . "/../includes/homematic.php");
 $home = new HomeMaticInstance;
 $devices = $home->getAllDevices(true);
 
+# redis stuff
+include_once($BASE_PATH . "/../includes/redis/redis.php");
+$redis = new redis_cli( "127.0.0.1", 6379);
+
+##########################################################
+#  Compare current Avg Temp against last known Avg Temp  #
+##########################################################
 $temperatures = array();
 foreach($devices AS $device) {
 	if(!empty($device["tempSensor"])) {
@@ -80,5 +87,47 @@ if($avgTemp >= 28 && $lastAvgValue < 28) {
 	sendPushMessage($pushMessage,$apiUrl,$apiToken,$apiUser);
 }
 
+##########################################################
+#         Check online status and temperature            #
+##########################################################
+
+# get temperatures again, this time only the target temperatures of valves
+$temperatures = array();
+foreach($devices AS $device) {
+	if($device["type"] == "valve") {
+		$temperatures[] = $device["targetTemp"];
+	}
+}
+
+# fetch all online status keys from redis
+$onlineStatusKeys = $redis->cmd("KEYS", "online-*")->get();
+
+$someoneHome = false;
+if(is_array($onlineStatusKeys)) {
+    foreach($onlineStatusKeys AS $key) {
+        $value = $redis->cmd("GET", $key)->get();
+        if($value == "1") {
+            # stop on the first positive match (no need to look further)
+            $someoneHome = true;
+            break;
+        }
+    }
+}
+
+# if nobody seems to be home, check valve temperatures and notify
+if(!$someoneHome) {
+    $tempOk = true;
+    foreach($temperatures AS $temperature) {
+        if($temperature >= 21) {
+            # stop on the first positive match (no need to look further)
+            $tempOk = false;
+            break;
+        }
+    }
+    if(!$tempOk) {
+        $pushMessage = "wtf, nobody is home but the temperature is set > 20C";
+        sendPushMessage($pushMessage,$apiUrl,$apiToken,$apiUser);
+    }
+}
 
 ?>
