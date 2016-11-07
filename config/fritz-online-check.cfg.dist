@@ -1,0 +1,9 @@
+[fritzbox]
+host=fritz.box
+username=USERNAME
+password=SECRETPASSWORD
+
+[redis]
+host=127.0.0.1
+port=6379
+
