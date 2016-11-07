@@ -95,6 +95,12 @@ $app->post('/enablePeering', function() use ($app) {
 	exit;
 });
 
+$app->get('/timeSchedules', function() use ($app) {
+	$site = new homeMaticInstance();
+	$app->render('timeschedules.html', array());
+});
+
+
 $app->run();
 
 ?>
