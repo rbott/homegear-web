@@ -13,7 +13,7 @@ class tempsetInstance {
 			$startTimeSeconds = (floatval($timeParts[0] . "." . $timeParts[1]) * 60);
 			foreach($days AS $day) {
 				$this->tempset["ENDTIME_" . $day . "_" . $this->currentTimesetId] = $startTimeSeconds;
-				$this->tempset["TEMPERATURE_" . $day . "_" . $this->currentTimesetId] = $temperature;
+				$this->tempset["TEMPERATURE_" . $day . "_" . $this->currentTimesetId] = floatval($temperature);
 			}
 			$this->currentTimesetId++;
 			return true;
@@ -31,14 +31,14 @@ class tempsetInstance {
 		$countEnd = 13;
 		$days = array("MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY","SUNDAY");
 		$sets = array("ENDTIME","TEMPERATURE");
-		$defaults = array("ENDTIME" => 1440, "TEMPERATURE" => 17);
+		$defaults = array("ENDTIME" => 1440, "TEMPERATURE" => 20.0);
 		foreach($sets AS $set) {
 			foreach($days AS $day) {
 				for($i = $countStart; $i <= $countEnd; $i++) {
 					$key = $set . "_" . $day . "_". $i;
 					if(!isset($this->tempset[$key])) {
 						$this->tempset[$key] = $defaults[$set];
-						echo "Added " . $key . " => " . $defaults[$set] . "\n";
+						#echo "Added " . $key . " => " . $defaults[$set] . "\n";
 					}
 				}
 			}
