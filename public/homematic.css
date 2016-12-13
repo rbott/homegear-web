@@ -16,3 +16,11 @@
 .settings-box img {
 	margin: 5px;
 }
+
+a.navbar-brand.homeStatus_home {
+    color: green;
+}
+
+a.navbar-brand.homeStatus_nothome {
+    color: red;
+}

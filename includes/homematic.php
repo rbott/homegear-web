@@ -6,19 +6,24 @@ include_once("/var/lib/homegear/scripts/HM-XMLRPC-Client/Client.php");
 include_once($BASEPATH . "/class.device.valve.php");
 include_once($BASEPATH . "/class.device.envsensor.php");
 include_once($BASEPATH . "/class.meta.tempset.php");
+include_once($BASEPATH . "/../includes/redis/redis.php");
+include_once($BASEPATH . "/../config/config.inc.php");
 
 class HomeMaticInstance
 {
 	private $XMLRPC;
 	private $valves = array();
 	private $envSensors = array();
-	private $peeringTimeout = -1;
+    private $peeringTimeout = -1;
+    private $config = array();
 
-	function HomeMaticInstance() {
+    function HomeMaticInstance() {
+        global $config;
 		$host = "localhost";
 		$port = 2001;
-		$ssl = false;
-		$this->XMLRPC = new \XMLRPC\Client($host, $port, $ssl);
+        $ssl = false;
+        $this->XMLRPC = new \XMLRPC\Client($host, $port, $ssl);
+        $this->config = $config;
 
 		$devices = $this->XMLRPC->send("listDevices", array());
 		foreach($devices AS $device) {
@@ -33,7 +38,39 @@ class HomeMaticInstance
 				}
 			}
 		}
-	}
+    }
+
+    function presenceEnabled() {
+        if(isset($this->config["presence"]) && isset($this->config["presence"]["enabled"])) {
+            return $this->config["presence"]["enabled"];
+        }
+        else {
+            return false;
+        }
+    }
+
+    function isHome() {
+        if($this->presenceEnabled()) {
+            $redis = new redis_cli($this->config["presence"]["redis_host"], $this->config["presence"]["redis_port"]);
+			$onlineStatusKeys = $redis->cmd("KEYS", "online-*")->get();
+
+			$someoneHome = false;
+			if(is_array($onlineStatusKeys)) {
+				foreach($onlineStatusKeys AS $key) {
+					$value = $redis->cmd("GET", $key)->get();
+					if($value == "1") {
+						# stop on the first positive match (no need to look further)
+						$someoneHome = true;
+						break;
+					}
+				}
+			}
+            return $someoneHome;
+		}
+        else {
+            return false;
+        }
+    }
 
 	function isPeering() {
 		$peeringMode = $this->XMLRPC->send("getInstallMode", array());

@@ -1,6 +1,6 @@
 <?php
 
-# wilfried-kuefen.de
+# homegear-web
 # Copyright (C) 2015  Rudolph Bott
 #
 
@@ -16,17 +16,6 @@ $app = new \Slim\Slim(array(
 	'templates.path' => '../tpl'
 ));
 
-/*
-$app->add(new \Slim\Middleware\HttpBasicAuthentication([
-	"path" => "/admin",
-	"realm" => "Protected",
-	"secure" => false,
-	"users" => [
-		"rudi" => "hgadmin",
-	]
-]));
-*/
-
 $app->view(new \Slim\Views\Twig());
 $app->view->parserExtensions = array(new \Slim\Views\TwigExtension());
 
@@ -36,20 +25,22 @@ $app->get('/', function() use ($app) {
 });
 
 $app->get('/overview', function() use ($app) {
-	$site = new homeMaticInstance();
-	$devices = $site->getAllDevices(true);
-	$app->render('overview.html', array("devices" => $devices,));
+	$hm = new homeMaticInstance();
+    $devices = $hm->getAllDevices(true);
+    $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
+	$app->render('overview.html', array("devices" => $devices, "homeStatus" => $homeStatus));
 });
 
 $app->get('/control', function() use ($app) {
-	$site = new homeMaticInstance();
-	$devices = $site->getAllDevices(true);
-	$app->render('control.html', array("devices" => $devices,));
+	$hm = new homeMaticInstance();
+	$devices = $hm->getAllDevices(true);
+    $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
+	$app->render('control.html', array("devices" => $devices, "homeStatus" => $homeStatus));
 });
 
 $app->post('/setTemp', function() use ($app) {
-	$site = new homeMaticInstance();
-	if($valve = $site->getValveByPeerId($_POST["peerId"])) {
+	$hm = new homeMaticInstance();
+	if($valve = $hm->getValveByPeerId($_POST["peerId"])) {
 		$valve->setTargetTemp(floatval($_POST["targetTemp"]));
 	}
 	Header("Location: /control");
@@ -57,10 +48,10 @@ $app->post('/setTemp', function() use ($app) {
 });
 
 $app->post('/setAllTemp', function() use ($app) {
-	$site = new homeMaticInstance();
+	$hm = new homeMaticInstance();
 	if(is_array($_POST["valves"])) {
 		foreach($_POST["valves"] AS $peerId) {
-			$site->setTargetTemperature(floatval($_POST["targetTemp"]), intval($peerId));
+			$hm->setTargetTemperature(floatval($_POST["targetTemp"]), intval($peerId));
 		}
 	}
 	Header("Location: /control");
@@ -68,36 +59,41 @@ $app->post('/setAllTemp', function() use ($app) {
 });
 
 $app->get('/valveDetails/:h', function($peerId) use ($app) {
-	$site = new homeMaticInstance();
-	$device = $site->getValveByPeerId($peerId);
-	$app->render('valveDetails.html', array("device" => $device,));
+	$hm = new homeMaticInstance();
+	$device = $hm->getValveByPeerId($peerId);
+    $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
+	$app->render('valveDetails.html', array("device" => $device, "homeStatus" => $homeStatus));
 });
 
 
 $app->get('/showGraphs', function() use ($app) {
-	$app->render('showgraphs.html', array());
+    $hm = new homeMaticInstance();
+    $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
+	$app->render('showgraphs.html', array("homeStatus" => $homeStatus));
 });
 
 $app->get('/showPeers', function() use ($app) {
-	$site = new homeMaticInstance();
-	$devices = $site->getAllDevices();
-	$peeringStatus = $site->isPeering();
-	$peeringTimeout = $site->getPeeringTimeout();
-	$app->render('showpeers.html', array("devices" => $devices, "peeringStatus" => $peeringStatus, "peeringTimeout" => $peeringTimeout));
+	$hm = new homeMaticInstance();
+	$devices = $hm->getAllDevices();
+	$peeringStatus = $hm->isPeering();
+	$peeringTimeout = $hm->getPeeringTimeout();
+    $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
+	$app->render('showpeers.html', array("devices" => $devices, "peeringStatus" => $peeringStatus, "peeringTimeout" => $peeringTimeout, "homeStatus" => $homeStatus));
 });
 
 $app->post('/enablePeering', function() use ($app) {
-	$site = new homeMaticInstance();
+	$hm = new homeMaticInstance();
 	if(isset($_POST["enablePeering"])) {
-		$site->setPeeringMode();
+		$hm->setPeeringMode();
 	}
 	Header("Location: /showPeers");
 	exit;
 });
 
 $app->get('/timeSchedules', function() use ($app) {
-	$site = new homeMaticInstance();
-	$app->render('timeschedules.html', array());
+	$hm = new homeMaticInstance();
+    $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
+	$app->render('timeschedules.html', array("homeStatus" => $homeStatus));
 });
 
 
