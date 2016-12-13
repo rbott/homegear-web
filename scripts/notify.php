@@ -127,7 +127,7 @@ if(!$someoneHome) {
     if(!$tempOk) {
         $lastNoOneHomeMsg = $redis->cmd("GET", "lastNoOneHomeMsg")->get();
         if(empty($lastNoOneHomeMsg) || (time() - $lastNoOneHomeMsg > 1800)) {
-            $pushMessage = "wtf, nobody is home but the temperature is set > 20C";
+            $pushMessage = "wtf, nobody is home but the temperature is set > 20C?";
             sendPushMessage($pushMessage,$apiUrl,$apiToken,$apiUser);
             $redis->cmd("SET", "lastNoOneHomeMsg", time())->set();
         }
