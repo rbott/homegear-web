@@ -240,7 +240,49 @@ class HomeMaticInstance
 				$valve->setTargetTemp($temp);
 			}
 		}
-	}
+    }
+
+    function getPrometheusStats(){
+        $devices = $this->getAllDevices(true);
+        $data = array();
+        $result = "";
+        foreach($devices AS $device) {
+            switch($device["type"]) {
+            case "valve":
+                $data["valve"]["temp"][$device["name"]] = $device["tempSensor"];
+                $data["valve"]["targettemp"][$device["name"]] = $device["targetTemp"];
+                $data["valve"]["valve"][$device["name"]] = $device["valveState"];
+                break;
+            case "envsensor":
+                $data["envsensor"]["temp"][$device["name"]] = $device["tempSensor"];
+                $data["envsensor"]["humidity"][$device["name"]] = $device["humidSensor"];
+            }
+        }
+        foreach($data AS $type => $device) {
+            $result .= sprintf("# TYPE homematic_%s_temp gauge\n", $type);
+            foreach($device["temp"] AS $name => $temp) {
+                $result .= sprintf("homematic_%s_temp{name=\"%s\"} %.2f\n", $type, $name, $temp);
+            }
+            if($type == "envsensor") {
+                $result .= sprintf("# TYPE homematic_%s_humidity gauge\n", $type);
+                foreach($device["humidity"] AS $name => $humidity) {
+                   $result .= sprintf("homematic_%s_humidity{name=\"%s\"} %d\n", $type, $name, $humidity);
+                }
+            }
+            if($type == "valve") {
+                $result .= sprintf("# TYPE homematic_" . $type . "_state gauge\n", $type);
+                foreach($device["valve"] AS $name => $state) {
+                   $result .= sprintf("homematic_%s_state{name=\"%s\"} %s\n", $type, $name, $state);
+                }
+                $result .= sprintf("# TYPE homematic_%s_target gauge\n", $type);
+                foreach($device["targettemp"] AS $name => $target) {
+                   $result .= sprintf("homematic_%s_target{name=\"%s\"} %d\n", $type, $name, $target);
+                }
+            }
+
+        }
+        return $result;
+    }
 
 }
 

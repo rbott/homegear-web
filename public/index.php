@@ -24,6 +24,13 @@ $app->get('/', function() use ($app) {
 	exit;
 });
 
+$app->get('/metrics', function() use ($app) {
+    $app->response->headers->set("Content-Type", "text/plain; version=0.0.4");
+    $hm = new homeMaticInstance();
+    $stats = $hm->getPrometheusStats();
+    echo $stats;
+});
+
 $app->get('/overview', function() use ($app) {
 	$hm = new homeMaticInstance();
     $devices = $hm->getAllDevices(true);
