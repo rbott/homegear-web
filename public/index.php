@@ -65,6 +65,15 @@ $app->post('/setAllTemp', function() use ($app) {
 	exit;
 });
 
+$app->post('/togglePwr', function() use ($app) {
+	$hm = new homeMaticInstance();
+    if($sensor = $hm->getPwrSensorByPeerId($_POST["peerId"])) {
+        $sensor->togglePower();
+	}
+	Header("Location: /control");
+	exit;
+});
+
 $app->get('/valveDetails/:h', function($peerId) use ($app) {
 	$hm = new homeMaticInstance();
 	$device = $hm->getValveByPeerId($peerId);

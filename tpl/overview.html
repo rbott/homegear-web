@@ -8,6 +8,7 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">{{ device.name }}</div>
 				<div class="panel-body">
+{% if device.type == "valve" or device.type == "envsensor" %}
 					<div class="row">
 						<div class="col-xs-4">
 							Temperatur:
@@ -20,6 +21,7 @@
 							</div>
 						</div>
 					</div>
+{% endif %}
 {% if device.humidSensor %}
 					<div class="row">
 						<div class="col-xs-4">
@@ -46,6 +48,24 @@
 							</div>
 						</div>
 					</div>{% endif %}
+{% if device.type == "pwrsensor" %}
+					<div class="row">
+						<div class="col-xs-4">
+							State:
+						</div>
+						<div class="col-xs-8">
+                            {% if device.enabled %}enabled{% else %}disabled{% endif %}
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-4">
+							Power:
+						</div>
+						<div class="col-xs-8">
+                            {{ device.power }}W
+						</div>
+					</div>
+{% endif %}
 				</div>
 			</div>	    
 		</div>

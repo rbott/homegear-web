@@ -5,6 +5,7 @@ $BASEPATH = realpath(dirname(__FILE__));
 include_once("/var/lib/homegear/scripts/HM-XMLRPC-Client/Client.php");
 include_once($BASEPATH . "/class.device.valve.php");
 include_once($BASEPATH . "/class.device.envsensor.php");
+include_once($BASEPATH . "/class.device.pwrsensor.php");
 include_once($BASEPATH . "/class.meta.tempset.php");
 include_once($BASEPATH . "/../includes/redis/redis.php");
 include_once($BASEPATH . "/../config/config.inc.php");
@@ -13,7 +14,8 @@ class HomeMaticInstance
 {
 	private $XMLRPC;
 	private $valves = array();
-	private $envSensors = array();
+    private $envSensors = array();
+    private $pwrSensors = array();
     private $peeringTimeout = -1;
     private $config = array();
 
@@ -34,7 +36,10 @@ class HomeMaticInstance
 					break;
 				case "HM-CC-RT-DN":
 					$this->valves[] = new HomeMaticValve($device["ADDRESS"], $device["CHANNELS"], $this->XMLRPC);
-					break;
+                    break;
+                case "HM-ES-PMSw1-Pl":
+                    $this->pwrSensors[] = new HomeMaticPwrSensor($device["ADDRESS"], $device["CHANNELS"], $this->XMLRPC);
+                    break;
 				}
 			}
 		}
@@ -119,6 +124,24 @@ class HomeMaticInstance
 		return false;
 	}
 
+    function getPwrSensorByName($name) {
+		foreach($this->pwrSensors AS $sensor) {
+			if($sensor->getName() == $name) {
+				return $sensor;
+			}
+		}
+		return false;
+	}
+
+	function getPwrSensorByPeerId($peerId) {
+		foreach($this->pwrSensors AS $sensor) {
+			if($sensor->getPeerId() == $peerId) {
+				return $sensor;
+			}
+		}
+		return false;
+	}
+
 	function getEnvSensorNames() {
 		$names = array();
 		foreach($this->envSensors AS $sensor) {
@@ -169,7 +192,26 @@ class HomeMaticInstance
 						"tempSensor" => $sensor->getTempSensor(),
 						"humidSensor" => $sensor->getHumidSensor());
 			}
-		}
+        }
+        foreach($this->pwrSensors AS $sensor) {
+   			if(!$withState) {
+				$devices[] = array( "name" => $sensor->getName(),
+						"peerId" => $sensor->getPeerId(),
+						"address" => $sensor->getAddress(),
+						"typeString" => $sensor->getTypeString(),
+						"type" => "pwrsensor");
+			}
+			else {
+				$devices[] = array( "name" => $sensor->getName(),
+						"peerId" => $sensor->getPeerId(),
+						"address" => $sensor->getAddress(),
+						"typeString" => $sensor->getTypeString(),
+                        "type" => "pwrsensor",
+                        "enabled" => $sensor->isEnabled(),
+                        "power" => $sensor->getPower());
+			}
+                    
+        }
 		return $devices;
 	}
 
@@ -256,12 +298,23 @@ class HomeMaticInstance
             case "envsensor":
                 $data["envsensor"]["temp"][$device["name"]] = $device["tempSensor"];
                 $data["envsensor"]["humidity"][$device["name"]] = $device["humidSensor"];
+                break;
+            case "pwrsensor":
+                $data["pwrsensor"]["power"][$device["name"]] = $device["power"];
+                $data["pwrsensor"]["enabled"][$device["name"]] = $device["enabled"];
+                $sensor = $this->getPwrSensorByName($device["name"]);
+                $data["pwrsensor"]["voltage"][$device["name"]] = $sensor->getVoltage();
+                $data["pwrsensor"]["current"][$device["name"]] = $sensor->getCurrent();
+                $data["pwrsensor"]["energyCounter"][$device["name"]] = $sensor->getEnergyCounter();
+                break;
             }
         }
         foreach($data AS $type => $device) {
-            $result .= sprintf("# TYPE homematic_%s_temp gauge\n", $type);
-            foreach($device["temp"] AS $name => $temp) {
-                $result .= sprintf("homematic_%s_temp{name=\"%s\"} %.2f\n", $type, $name, $temp);
+            if($type == "envsensor" || $type == "valve") {
+                $result .= sprintf("# TYPE homematic_%s_temp gauge\n", $type);
+                foreach($device["temp"] AS $name => $temp) {
+                    $result .= sprintf("homematic_%s_temp{name=\"%s\"} %.2f\n", $type, $name, $temp);
+                }
             }
             if($type == "envsensor") {
                 $result .= sprintf("# TYPE homematic_%s_humidity gauge\n", $type);
@@ -270,13 +323,35 @@ class HomeMaticInstance
                 }
             }
             if($type == "valve") {
-                $result .= sprintf("# TYPE homematic_" . $type . "_state gauge\n", $type);
+                $result .= sprintf("# TYPE homematic_%s_state gauge\n", $type);
                 foreach($device["valve"] AS $name => $state) {
                    $result .= sprintf("homematic_%s_state{name=\"%s\"} %s\n", $type, $name, $state);
                 }
                 $result .= sprintf("# TYPE homematic_%s_target gauge\n", $type);
                 foreach($device["targettemp"] AS $name => $target) {
                    $result .= sprintf("homematic_%s_target{name=\"%s\"} %d\n", $type, $name, $target);
+                }
+            }
+            if($type == "pwrsensor") {
+                $result .= sprintf("# TYPE homematic_%s_enabled gauge\n", $type);
+                foreach($device["enabled"] AS $name => $enabled) {
+                    $result .= sprintf("homematic_%s_enabled{name=\"%s\"} %b\n", $type, $name, $enabled);
+                }
+                $result .= sprintf("# TYPE homematic_%s_power gauge\n", $type);
+                foreach($device["power"] AS $name => $power) {
+                    $result .= sprintf("homematic_%s_power{name=\"%s\"} %s\n", $type, $name, $power);
+                }
+                $result .= sprintf("# TYPE homematic_%s_current gauge\n", $type);
+                foreach($device["current"] AS $name => $current) {
+                    $result .= sprintf("homematic_%s_current{name=\"%s\"} %s\n", $type, $name, $current);
+                }
+                $result .= sprintf("# TYPE homematic_%s_voltage gauge\n", $type);
+                foreach($device["voltage"] AS $name => $voltage) {
+                    $result .= sprintf("homematic_%s_voltage{name=\"%s\"} %s\n", $type, $name, $voltage);
+                }
+                $result .= sprintf("# TYPE homematic_%s_energycounter counter\n", $type);
+                foreach($device["energyCounter"] AS $name => $energyCounter) {
+                    $result .= sprintf("homematic_%s_energycounter{name=\"%s\"} %s\n", $type, $name, $energyCounter);
                 }
             }
 
