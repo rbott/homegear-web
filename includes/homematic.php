@@ -6,6 +6,7 @@ include_once("/var/lib/homegear/scripts/HM-XMLRPC-Client/Client.php");
 include_once($BASEPATH . "/class.device.valve.php");
 include_once($BASEPATH . "/class.device.envsensor.php");
 include_once($BASEPATH . "/class.device.pwrsensor.php");
+include_once($BASEPATH . "/class.device.switch.php");
 include_once($BASEPATH . "/class.meta.tempset.php");
 include_once($BASEPATH . "/../includes/redis/redis.php");
 include_once($BASEPATH . "/../config/config.inc.php");
@@ -39,6 +40,9 @@ class HomeMaticInstance
                     break;
                 case "HM-ES-PMSw1-Pl":
                     $this->pwrSensors[] = new HomeMaticPwrSensor($device["ADDRESS"], $device["CHANNELS"], $this->XMLRPC);
+                    break;
+                case "HM-PB-6-WM55":
+                    $this->switches[] = new HomeMaticSwitch($device["ADDRESS"], $device["CHANNELS"], $this->XMLRPC);
                     break;
 				}
 			}
@@ -210,7 +214,13 @@ class HomeMaticInstance
                         "enabled" => $sensor->isEnabled(),
                         "power" => $sensor->getPower());
 			}
-                    
+        }
+        foreach($this->switches AS $switch) {
+            $devices[] = array( "name" => $switch->getName(),
+				"peerId" => $switch->getPeerId(),
+				"address" => $switch->getAddress(),
+				"typeString" => $switch->getTypeString(),
+				"type" => "switch");
         }
 		return $devices;
 	}
