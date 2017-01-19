@@ -8,6 +8,7 @@ include_once($BASEPATH . "/class.device.envsensor.php");
 include_once($BASEPATH . "/class.device.pwrsensor.php");
 include_once($BASEPATH . "/class.device.switch.php");
 include_once($BASEPATH . "/class.meta.tempset.php");
+include_once($BASEPATH . "/class.meta.events.php");
 include_once($BASEPATH . "/../includes/redis/redis.php");
 include_once($BASEPATH . "/../config/config.inc.php");
 
@@ -20,6 +21,8 @@ class HomeMaticInstance
     private $peeringTimeout = -1;
     private $config = array();
 
+    public $events;
+
     function HomeMaticInstance() {
         global $config;
 		$host = "localhost";
@@ -27,6 +30,8 @@ class HomeMaticInstance
         $ssl = false;
         $this->XMLRPC = new \XMLRPC\Client($host, $port, $ssl);
         $this->config = $config;
+
+        $this->events = new HomeMaticEvents($this->XMLRPC);
 
 		$devices = $this->XMLRPC->send("listDevices", array());
 		foreach($devices AS $device) {
@@ -101,6 +106,54 @@ class HomeMaticInstance
 	function setPeeringMode() {
 		$this->XMLRPC->send("setInstallMode", array(true));
 	}
+
+    function getDeviceByName($name) {
+		foreach($this->valves AS $valve) {
+			if($valve->getName() == $name) {
+				return $valve;
+			}
+		}
+		foreach($this->envSensors AS $sensor) {
+			if($sensor->getName() == $name) {
+				return $sensor;
+			}
+		}
+		foreach($this->pwrSensors AS $sensor) {
+			if($sensor->getName() == $name) {
+				return $sensor;
+			}
+		}
+		foreach($this->switches AS $switch) {
+			if($switch->getName() == $name) {
+				return $switch;
+			}
+		}
+		return false;
+	}
+
+    function getDeviceByPeerId($peerId) {
+		foreach($this->valves AS $valve) {
+			if($valve->getPeerId() == $peerId) {
+				return $valve;
+			}
+		}
+		foreach($this->envSensors AS $sensor) {
+			if($sensor->getPeerId() == $peerId) {
+				return $sensor;
+			}
+		}
+		foreach($this->pwrSensors AS $sensor) {
+			if($sensor->getPeerId() == $peerId) {
+				return $sensor;
+			}
+		}
+		foreach($this->switches AS $switch) {
+			if($switch->getPeerId() == $peerId) {
+				return $switch;
+			}
+		}
+		return false;
+    }
 
 	function getValveNames() {
 		$names = array();
@@ -292,6 +345,27 @@ class HomeMaticInstance
 				$valve->setTargetTemp($temp);
 			}
 		}
+    }
+
+    function getEvents() {
+        $rpcEvents = $this->events->getEvents();
+        $events = array();
+        foreach($rpcEvents as $event) {
+            $peerName = $this->getDeviceByPeerId($event["PEERID"])->getName();
+            $enabled = ($event["ENABLED"] == 1 ? true : false);
+            $events[] = array( "peerName" => $peerName,
+                "eventId" => $event["ID"],
+                "eventType" => $this->events->lookupType($event["TYPE"]),
+                "eventTrigger" => $this->events->lookupTrigger($event["TRIGGER"]),
+                "eventMethod" => $event["EVENTMETHOD"],
+                "peerChannel" => $event["PEERCHANNEL"],
+                "peerVariable" => $event["VARIABLE"],
+                "eventMethodParams" => join($event["EVENTMETHODPARAMS"],", "),
+                "eventEnabled" => $enabled,
+            );
+        }
+
+        return $events;
     }
 
     function getPrometheusStats(){

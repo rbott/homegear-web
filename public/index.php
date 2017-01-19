@@ -106,6 +106,13 @@ $app->post('/enablePeering', function() use ($app) {
 	exit;
 });
 
+$app->get('/showEvents', function() use ($app) {
+    $hm = new homeMaticInstance();
+    $events = $hm->getEvents();
+    $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
+	$app->render('showevents.html', array("homeStatus" => $homeStatus, "events" => $events));
+});
+
 $app->get('/timeSchedules', function() use ($app) {
 	$hm = new homeMaticInstance();
     $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
