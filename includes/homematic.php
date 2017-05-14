@@ -3,6 +3,7 @@
 $BASEPATH = realpath(dirname(__FILE__));
 
 include_once("/var/lib/homegear/scripts/HM-XMLRPC-Client/Client.php");
+include_once($BASEPATH . "/class.device.generic.php");
 include_once($BASEPATH . "/class.device.valve.php");
 include_once($BASEPATH . "/class.device.envsensor.php");
 include_once($BASEPATH . "/class.device.pwrsensor.php");
