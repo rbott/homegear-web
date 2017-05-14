@@ -54,7 +54,7 @@ class HomeMaticSwitch {
 
 	function setParamset($paramset, $channel = 0, $type = "VALUES") {
 		$this->XMLRPC->send("putParamset", array(intval($this->peerId), $channel, $type, $paramset));
-		sleep(1);
+		usleep(500);
 	}
 
 }

@@ -69,15 +69,15 @@ class HomeMaticValve {
 		switch($mode) {
 		case 'auto':
 			print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "AUTO_MODE", true)));
-			sleep(1);
+			usleep(500);
 			break;
 		case 'manual':
 			print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "MANU_MODE", true)));
-			sleep(1);
+			usleep(500);
 			break;
 		case 'boost':
 			print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "BOOST_MODE", true)));
-			sleep(1);
+			usleep(500);
 			break;
 		default:
 			echo "setControlMode(): unknown value for \$mode. Use 'auto', 'manual' or 'boost'\n";
@@ -111,7 +111,7 @@ class HomeMaticValve {
 
 	function setTargetTemp($temp) {
 		print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "SET_TEMPERATURE", $temp)));
-		sleep(1);
+		usleep(500);
 	}
 
 	function getBatteryState() {
@@ -125,7 +125,7 @@ class HomeMaticValve {
 
 	function setParamset($paramset, $channel = 0, $type = "VALUES") {
 		$this->XMLRPC->send("putParamset", array(intval($this->peerId), $channel, $type, $paramset));
-		sleep(1);
+		usleep(500);
 	}
 
 	function updateParameters() {
