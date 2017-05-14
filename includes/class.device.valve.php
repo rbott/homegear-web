@@ -43,15 +43,15 @@ class HomeMaticValve extends HomeMaticGenericDevice {
 	function setControlMode($mode) {
 		switch($mode) {
 		case 'auto':
-			print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "AUTO_MODE", true)));
+			print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "AUTO_MODE", true, true)));
 			usleep(500);
 			break;
 		case 'manual':
-			print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "MANU_MODE", true)));
+			print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "MANU_MODE", true, true)));
 			usleep(500);
 			break;
 		case 'boost':
-			print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "BOOST_MODE", true)));
+			print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "BOOST_MODE", true, true)));
 			usleep(500);
 			break;
 		default:
@@ -80,12 +80,12 @@ class HomeMaticValve extends HomeMaticGenericDevice {
 	}
 
 	function getTargetTemp() {
-		$this->targetTemp = $this->XMLRPC->send("getValue", array(intval($this->peerId), 4, "SET_TEMPERATURE", false));
+		$this->targetTemp = $this->XMLRPC->send("getValue", array(intval($this->peerId), 4, "SET_TEMPERATURE", false, true));
 		return $this->targetTemp;
 	}
 
 	function setTargetTemp($temp) {
-		print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "SET_TEMPERATURE", $temp)));
+		print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "SET_TEMPERATURE", $temp, true)));
 		usleep(500);
 	}
 

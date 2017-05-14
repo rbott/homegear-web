@@ -35,14 +35,16 @@ $app->get('/overview', function() use ($app) {
 	$hm = new homeMaticInstance();
     $devices = $hm->getAllDevices(true);
     $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
-	$app->render('overview.html', array("devices" => $devices, "homeStatus" => $homeStatus));
+    $serviceMessages = $hm->getServiceMessages();
+	$app->render('overview.html', array("devices" => $devices, "serviceMessages" => $serviceMessages, "homeStatus" => $homeStatus));
 });
 
 $app->get('/control', function() use ($app) {
 	$hm = new homeMaticInstance();
 	$devices = $hm->getAllDevices(true);
     $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
-	$app->render('control.html', array("devices" => $devices, "homeStatus" => $homeStatus));
+    $serviceMessages = $hm->getServiceMessages();
+	$app->render('control.html', array("devices" => $devices, "serviceMessages" => $serviceMessages, "homeStatus" => $homeStatus));
 });
 
 $app->post('/setTemp', function() use ($app) {

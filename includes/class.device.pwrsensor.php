@@ -44,11 +44,11 @@ class HomeMaticPwrSensor extends HomeMaticGenericDevice {
     }
 
     function enable() {
-		$this->XMLRPC->send("setValue", array(intval($this->peerId), 1, "STATE", true));
+		$this->XMLRPC->send("setValue", array(intval($this->peerId), 1, "STATE", true, true));
     }
 
     function disable() {
-        $this->XMLRPC->send("setValue", array(intval($this->peerId), 1, "STATE", false));
+        $this->XMLRPC->send("setValue", array(intval($this->peerId), 1, "STATE", false, true));
     }
 
     function togglePower() {

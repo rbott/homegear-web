@@ -106,7 +106,43 @@ class HomeMaticInstance
 
 	function setPeeringMode() {
 		$this->XMLRPC->send("setInstallMode", array(true));
-	}
+    }
+
+    function getServiceMessages() {
+        $messages = $this->XMLRPC->send("getServiceMessages", array(true));
+        $return = array();
+        foreach($messages AS $message) {
+            $entry = array( "id" => $message[0],
+                            "deviceName" => $this->getDeviceByPeerId($message[0])->getName(),
+                            "type" => $message[2],
+                            "value" => $message[3]);
+            switch ($message[2]) {
+            case "STICKY_UNREACH":
+                # we ignore these for now
+                break;
+            case "LOWBAT":
+                $entry["message"] = "Battery low.";
+                $return[] = $entry;
+                break;
+            case "UNREACH":
+                $entry["message"] = "Device offline.";
+                $return[] = $entry;
+                break;
+            case "CONFIG_PENDING":
+                $entry["message"] = "There is still data to be submitted to this device.";
+                $return[] = $entry;
+                break;
+            case "ERROR":
+                $entry["message"] = "An undefined error has occured with this device (payload: '" . $message[3] . "').";
+                $return[] = $entry;
+                break;
+            default:
+                $entry["message"] = "Unknown message type '" . $message[2] . "' with payload '" . $message[3] . "' occured.";
+                $return[] = $entry;
+            }
+        }
+        return $return;
+    }
 
     function getDeviceByName($name) {
 		foreach($this->valves AS $valve) {
