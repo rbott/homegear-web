@@ -6,8 +6,9 @@ class HomeMaticGenericDevice {
 	protected $channels;
 	protected $peerId;
 	protected $typeString;
-	protected $name;
-    protected $batteryState;
+    protected $name;
+    protected $hasBattery = true;
+    protected $lowBattery = false;
 
     function __construct($address, $channels, $xmlrpc) {
 		$this->XMLRPC = $xmlrpc;
@@ -37,10 +38,13 @@ class HomeMaticGenericDevice {
 		return $this->typeString;
 	}
 
-	function getBatteryState() {
-		$this->batteryState = $this->XMLRPC->send("getValue", array(intval($this->peerId), 4, "BATTERY_STATE", false));
-		return $this->batteryState;
+    function isBatteryLow() {
+        if($this->hasBattery) {
+            $this->lowBattery = $this->XMLRPC->send("getValue", array(intval($this->peerId), 0, "LOWBAT", false));
+        }
+        return $this->lowBattery;
 	}
+
 
 	function getParamset($channel = 0, $type = "VALUES") {
 		return $this->XMLRPC->send("getParamset", array(intval($this->peerId), $channel, $type));

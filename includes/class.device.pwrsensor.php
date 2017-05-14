@@ -10,6 +10,7 @@ class HomeMaticPwrSensor extends HomeMaticGenericDevice {
 
     function __construct($address, $channels, $xmlrpc) {
         parent::__construct($address, $channels, $xmlrpc);
+        $this->hasBattery = false;
 	}
 
 	function isEnabled() {
