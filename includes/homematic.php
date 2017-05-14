@@ -216,7 +216,9 @@ class HomeMaticInstance
 						"peerId" => $valve->getPeerId(),
 						"address" => $valve->getAddress(),
 						"typeString" => $valve->getTypeString(),
-						"type" => "valve");
+                        "type" => "valve",
+                        "batteryLow" => $valve->isBatteryLow(),
+                        "batteryVoltage" => $valve->getBatteryVoltage());
 			}
 			else {
 				$devices[] = array( "name" => $valve->getName(),
@@ -230,7 +232,9 @@ class HomeMaticInstance
 						"controlMode" => $valve->getControlMode(),
 						"tempFallMode" => $valve->getTempFallMode(),
 						"tempFallTemp" => $valve->getTempFallTemp(),
-						"tempFallWindow" => $valve->getTempFallWindow());
+                        "tempFallWindow" => $valve->getTempFallWindow(),
+                        "batteryLow" => $valve->isBatteryLow(),
+                        "batteryVoltage" => $valve->getBatteryVoltage());
 			}
 		}
 		foreach($this->envSensors AS $sensor) {
@@ -239,7 +243,8 @@ class HomeMaticInstance
 						"peerId" => $sensor->getPeerId(),
 						"address" => $sensor->getAddress(),
 						"typeString" => $sensor->getTypeString(),
-						"type" => "envsensor");
+                        "type" => "envsensor",
+                        "batteryLow" => $sensor->isBatteryLow());
 			}
 			else {
 				$devices[] = array( "name" => $sensor->getName(),
@@ -248,7 +253,8 @@ class HomeMaticInstance
 						"typeString" => $sensor->getTypeString(),
 						"type" => "envsensor",
 						"tempSensor" => $sensor->getTempSensor(),
-						"humidSensor" => $sensor->getHumidSensor());
+                        "humidSensor" => $sensor->getHumidSensor(),
+                        "batteryLow" => $sensor->isBatteryLow());
 			}
         }
         foreach($this->pwrSensors AS $sensor) {
@@ -257,7 +263,8 @@ class HomeMaticInstance
 						"peerId" => $sensor->getPeerId(),
 						"address" => $sensor->getAddress(),
 						"typeString" => $sensor->getTypeString(),
-						"type" => "pwrsensor");
+                        "type" => "pwrsensor",
+                        "batteryLow" => $sensor->isBatteryLow());
 			}
 			else {
 				$devices[] = array( "name" => $sensor->getName(),
@@ -266,7 +273,8 @@ class HomeMaticInstance
 						"typeString" => $sensor->getTypeString(),
                         "type" => "pwrsensor",
                         "enabled" => $sensor->isEnabled(),
-                        "power" => $sensor->getPower());
+                        "power" => $sensor->getPower(),
+                        "batteryLow" => $sensor->isBatteryLow());
 			}
         }
         foreach($this->switches AS $switch) {
@@ -274,7 +282,8 @@ class HomeMaticInstance
 				"peerId" => $switch->getPeerId(),
 				"address" => $switch->getAddress(),
 				"typeString" => $switch->getTypeString(),
-				"type" => "switch");
+                "type" => "switch",
+                "batteryLow" => $switch->isBatteryLow());
         }
 		return $devices;
 	}
@@ -379,6 +388,7 @@ class HomeMaticInstance
                 $data["valve"]["temp"][$device["name"]] = $device["tempSensor"];
                 $data["valve"]["targettemp"][$device["name"]] = $device["targetTemp"];
                 $data["valve"]["valve"][$device["name"]] = $device["valveState"];
+                $data["valve"]["battery"][$device["name"]] = $device["batteryVoltage"];
                 break;
             case "envsensor":
                 $data["envsensor"]["temp"][$device["name"]] = $device["tempSensor"];
@@ -415,6 +425,10 @@ class HomeMaticInstance
                 $result .= sprintf("# TYPE homematic_%s_target gauge\n", $type);
                 foreach($device["targettemp"] AS $name => $target) {
                    $result .= sprintf("homematic_%s_target{name=\"%s\"} %d\n", $type, $name, $target);
+                }
+                $result .= sprintf("# TYPE homematic_%s_battery gauge\n", $type);
+                foreach($device["battery"] AS $name => $state) {
+                   $result .= sprintf("homematic_%s_battery{name=\"%s\"} %s\n", $type, $name, $state);
                 }
             }
             if($type == "pwrsensor") {
