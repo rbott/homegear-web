@@ -15,6 +15,40 @@ function sendPushMessage($pushMessage,$apiUrl,$apiToken,$apiUser) {
 	curl_close($ch);
 }
 
+function storeNotification($type, $deviceId = 0, $timeout = 21600) {
+    global $config;
+    global $redis;
+    switch($type) {
+    case "tempTooHighReminder":
+        $keyName = "tempTooHighReminder";
+        break;
+    default:
+        $keyName = $type . "_" . $deviceId;
+        break;
+    }   
+    $redis->cmd('SET',$keyName, time(), "EX", $timeout)->set();
+}
+
+function notifyAllowed($type, $deviceId = 0) {
+    global $config;
+    global $redis;
+    switch($type) {
+    case "tempTooHighReminder":
+        $keyName = "tempTooHighReminder";
+        break;
+    default:
+        $keyName = $type . "_" . $deviceId;
+        break;
+    }   
+    if($value = $redis->cmd('GET', $keyName)->get()) {
+        return false;
+    }   
+    else {
+        return true;
+    }   
+}
+
+
 # basic variables
 $BASE_PATH = realpath(dirname(__FILE__));
 include($BASE_PATH . "/../config/pushover-config.php");
@@ -27,7 +61,7 @@ $devices = $home->getAllDevices(true);
 
 # redis stuff
 include_once($BASE_PATH . "/../includes/redis/redis.php");
-$redis = new redis_cli( "127.0.0.1", 6379);
+$redis = new redis_cli($config["presence"]["redis_host"], $config["presence"]["redis_port"]);
 
 ##########################################################
 #  Compare current Avg Temp against last known Avg Temp  #
@@ -125,12 +159,37 @@ if(!$someoneHome) {
         }
     }
     if(!$tempOk) {
-        $lastNoOneHomeMsg = $redis->cmd("GET", "lastNoOneHomeMsg")->get();
-        if(empty($lastNoOneHomeMsg) || (time() - $lastNoOneHomeMsg > 1800)) {
+        if(notifyAllowed("tempTooHighReminder")) {
             $pushMessage = "wtf, nobody is home but the temperature is set > 20C?";
             sendPushMessage($pushMessage,$apiUrl,$apiToken,$apiUser);
-            $redis->cmd("SET", "lastNoOneHomeMsg", time())->set();
+            storeNotification("tempTooHighReminder");
         }
     }
 }
+
+##########################################################
+#            Check homegear Service Messages             #
+##########################################################
+
+$events = $home->getServiceMessages();
+
+foreach($events AS $event) {
+    switch($event["type"]) {
+    case "UNREACH":
+        if(notifyAllowed($event["type"], $event["id"])) {
+            $pushMessage = $event["deviceName"] . ": " . $event["message"];
+            sendPushMessage($pushMessage,$apiUrl,$apiToken,$apiUser);
+            storeNotification($event["type"], $event["id"]);
+        }
+        break;
+    case "LOWBAT":
+        if(notifyAllowed($event["type"], $event["id"])) {
+            $pushMessage = $event["deviceName"] . ": " . $event["message"];
+            sendPushMessage($pushMessage,$apiUrl,$apiToken,$apiUser);
+            storeNotification($event["type"], $event["id"]);
+        }
+        break;
+    }
+}
+
 
