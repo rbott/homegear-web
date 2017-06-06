@@ -47,6 +47,10 @@ class HomeMaticEvents {
         print_r($this->XMLRPC->send("removeEvent",$id));
     }
 
+    function triggerEvent($id) {
+        return $this->XMLRPC->send("triggerEvent",$id);
+    }
+
     function lookupType($type) {
         return array_search($type, $this->types);
     }

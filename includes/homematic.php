@@ -414,6 +414,10 @@ class HomeMaticInstance
         return $events;
     }
 
+    function triggerEvent($eventId) {
+        return $this->events->triggerEvent($eventId);
+    }
+
     function getPrometheusStats(){
         $devices = $this->getAllDevices(true);
         $data = array();

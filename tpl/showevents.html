@@ -13,7 +13,7 @@
 								<th>Peer:Channel</th>
 								<th>ID</th>
 								<th>Trigger</th>
-                                <th>Method/Params</th>
+                                <th colspan="2">Method/Params</th>
 							</tr>
 {% for event in events %}
 							<tr>
@@ -21,6 +21,7 @@
 								<td>{{ event.eventId }}</td>
                                 <td>{{ event.eventTrigger }}:<br>{{ event.peerVariable }}</td>
                                 <td>{{ event.eventMethod }}<br>{{ event.eventMethodParams }}</td>
+                                <td><a class="btn btn-default" href="/triggerEvent/{{ event.eventId }}" role="button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a></td>
 							</tr>
 {% endfor %}	
 						</table>

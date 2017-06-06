@@ -115,6 +115,13 @@ $app->get('/showEvents', function() use ($app) {
 	$app->render('showevents.html', array("homeStatus" => $homeStatus, "events" => $events));
 });
 
+$app->get('/triggerEvent/:h', function($eventId) use ($app) {
+    $hm = new homeMaticInstance();
+    $events = $hm->triggerEvent($eventId);
+    Header("Location: /showEvents");
+    exit;
+});
+
 $app->get('/timeSchedules', function() use ($app) {
 	$hm = new homeMaticInstance();
     $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
