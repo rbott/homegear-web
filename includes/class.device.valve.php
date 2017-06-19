@@ -1,46 +1,28 @@
 <?php
 
-class HomeMaticValve {
-	private $XMLRPC;
-	private $address;
-	private $channels;
-	private $peerId;
-	private $name;
+class HomeMaticValve extends HomeMaticGenericDevice {
 	private $tempSensor;
 	private $valveState;
 	private $controlMode;
 	private $targetTemp;
-	private $batteryState;
 	private $tempFallMode;
 	private $tempFallValue;
 	private $tempFallTemp;
 	private $tempFallWindow;
+    private $batteryVoltage;
 
 	private $controlModes = array("auto", "manual", "party", "boost");
 	private $tempFallModes = array("inactive","auto","auto_manual","auto_party","active");
 
 	private $lastParamsetUpdate = 0;
 
-	function HomeMaticValve ($address, $channels, $xmlrpc) {
-		$this->XMLRPC = $xmlrpc;
-		$this->address = $address;
-		$this->channels = $channels;
-		$peerId = $this->XMLRPC->send("getPeerId",array(1,$address));
-		$this->peerId = $peerId[0];
-		$name = $this->XMLRPC->send("getDeviceInfo", array(intval($this->peerId),array('NAME')));
-		$this->name = $name["NAME"];
+    function __construct($address, $channels, $xmlrpc) {
+        parent::__construct($address, $channels, $xmlrpc);
 	}
 
-	function getName() {
-		return $this->name;
-	}
-
-	function getAddress() {
-		return $this->address;
-	}
-
-	function getPeerId() {
-		return $this->peerId;
+    function getBatteryVoltage() {
+		$this->batteryVoltage = $this->XMLRPC->send("getValue", array(intval($this->peerId), 4, "BATTERY_STATE", false));
+		return $this->batteryVoltage;
 	}
 
 	function getTempSensor() {
@@ -61,16 +43,16 @@ class HomeMaticValve {
 	function setControlMode($mode) {
 		switch($mode) {
 		case 'auto':
-			print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "AUTO_MODE", true)));
-			sleep(1);
+			print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "AUTO_MODE", true, true)));
+			usleep(500);
 			break;
 		case 'manual':
-			print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "MANU_MODE", true)));
-			sleep(1);
+			print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "MANU_MODE", true, true)));
+			usleep(500);
 			break;
 		case 'boost':
-			print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "BOOST_MODE", true)));
-			sleep(1);
+			print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "BOOST_MODE", true, true)));
+			usleep(500);
 			break;
 		default:
 			echo "setControlMode(): unknown value for \$mode. Use 'auto', 'manual' or 'boost'\n";
@@ -98,27 +80,13 @@ class HomeMaticValve {
 	}
 
 	function getTargetTemp() {
-		$this->targetTemp = $this->XMLRPC->send("getValue", array(intval($this->peerId), 4, "SET_TEMPERATURE", false));
+		$this->targetTemp = $this->XMLRPC->send("getValue", array(intval($this->peerId), 4, "SET_TEMPERATURE", false, true));
 		return $this->targetTemp;
 	}
 
 	function setTargetTemp($temp) {
-		print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "SET_TEMPERATURE", $temp)));
-		sleep(1);
-	}
-
-	function getBatteryState() {
-		$this->batteryState = $this->XMLRPC->send("getValue", array(intval($this->peerId), 4, "BATTERY_STATE", false));
-		return $this->batteryState;
-	}
-
-	function getParamset($channel = 0, $type = "VALUES") {
-		return $this->XMLRPC->send("getParamset", array(intval($this->peerId), $channel, $type));
-	}
-
-	function setParamset($paramset, $channel = 0, $type = "VALUES") {
-		$this->XMLRPC->send("putParamset", array(intval($this->peerId), $channel, $type, $paramset));
-		sleep(1);
+		print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "SET_TEMPERATURE", $temp, true)));
+		usleep(500);
 	}
 
 	function updateParameters() {
