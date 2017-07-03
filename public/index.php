@@ -9,6 +9,7 @@ require_once('../includes/Slim/Slim.php');
 
 require_once('../config/config.inc.php');
 require_once('../includes/homematic.php');
+require_once('../includes/nad.php');
 
 \Slim\Slim::registerAutoloader();
 
@@ -33,18 +34,31 @@ $app->get('/metrics', function() use ($app) {
 
 $app->get('/overview', function() use ($app) {
 	$hm = new homeMaticInstance();
-    $devices = $hm->getAllDevices(true);
-    $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
-    $serviceMessages = $hm->getServiceMessages();
-	$app->render('overview.html', array("devices" => $devices, "serviceMessages" => $serviceMessages, "homeStatus" => $homeStatus));
+	$app->render('overview.html', array("pageTitle" => "Dashboard", "hm" => $hm));
 });
 
 $app->get('/control', function() use ($app) {
+    global $config;
 	$hm = new homeMaticInstance();
-	$devices = $hm->getAllDevices(true);
-    $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
-    $serviceMessages = $hm->getServiceMessages();
-	$app->render('control.html', array("devices" => $devices, "serviceMessages" => $serviceMessages, "homeStatus" => $homeStatus));
+    $devices = $hm->getAllDevices(true);
+    $customActions = $config["actions"];
+	$app->render('control.html', array("pageTitle" => "Control", "customActions" => $customActions, "hm" => $hm, "devices" => $devices));
+});
+
+$app->get('/customAction/:h', function($id) use ($app) {
+    global $config;
+    if(is_numeric($id) && isset($config["actions"][$id])) {
+        $action = $config["actions"][$id];
+        switch($action["method"]) {
+        case "hgscript":
+	        $hm = new homeMaticInstance();
+            $hm->runscript($action["path"], join(" ", $action["params"]));
+            break;
+        }
+
+    }
+    Header("Location: /control");
+    exit;
 });
 
 $app->post('/setTemp', function() use ($app) {
@@ -67,6 +81,33 @@ $app->post('/setAllTemp', function() use ($app) {
 	exit;
 });
 
+$app->post('/enableAllPower', function() use ($app) {
+	$hm = new homeMaticInstance();
+	if(is_array($_POST["pwrsensors"])) {
+        foreach($_POST["pwrsensors"] AS $peerId) {
+            if($sensor = $hm->getPwrSensorByPeerId($peerId)) {
+                $sensor->enable();
+            }
+		}
+	}
+	Header("Location: /control");
+	exit;
+});
+
+$app->post('/disableAllPower', function() use ($app) {
+	$hm = new homeMaticInstance();
+	if(is_array($_POST["pwrsensors"])) {
+        foreach($_POST["pwrsensors"] AS $peerId) {
+            if($sensor = $hm->getPwrSensorByPeerId($peerId)) {
+                $sensor->disable();
+            }
+		}
+	}
+	Header("Location: /control");
+	exit;
+});
+
+
 $app->post('/togglePwr', function() use ($app) {
 	$hm = new homeMaticInstance();
     if($sensor = $hm->getPwrSensorByPeerId($_POST["peerId"])) {
@@ -79,15 +120,13 @@ $app->post('/togglePwr', function() use ($app) {
 $app->get('/valveDetails/:h', function($peerId) use ($app) {
 	$hm = new homeMaticInstance();
 	$device = $hm->getValveByPeerId($peerId);
-    $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
-	$app->render('valveDetails.html', array("device" => $device, "homeStatus" => $homeStatus));
+	$app->render('valveDetails.html', array("device" => $device));
 });
 
 
 $app->get('/showGraphs', function() use ($app) {
     $hm = new homeMaticInstance();
-    $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
-	$app->render('showgraphs.html', array("homeStatus" => $homeStatus));
+	$app->render('showgraphs.html', array("hm" => $hm));
 });
 
 $app->get('/showPeers', function() use ($app) {
@@ -95,8 +134,7 @@ $app->get('/showPeers', function() use ($app) {
 	$devices = $hm->getAllDevices();
 	$peeringStatus = $hm->isPeering();
 	$peeringTimeout = $hm->getPeeringTimeout();
-    $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
-	$app->render('showpeers.html', array("devices" => $devices, "peeringStatus" => $peeringStatus, "peeringTimeout" => $peeringTimeout, "homeStatus" => $homeStatus));
+	$app->render('showpeers.html', array("pageTitle" => "Peers", "hm" => $hm, "devices" => $devices, "peeringStatus" => $peeringStatus, "peeringTimeout" => $peeringTimeout));
 });
 
 $app->post('/enablePeering', function() use ($app) {
@@ -111,8 +149,7 @@ $app->post('/enablePeering', function() use ($app) {
 $app->get('/showEvents', function() use ($app) {
     $hm = new homeMaticInstance();
     $events = $hm->getEvents();
-    $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
-	$app->render('showevents.html', array("homeStatus" => $homeStatus, "events" => $events));
+	$app->render('showevents.html', array("pageTitle" => "Events", "hm" => $hm, "events" => $events));
 });
 
 $app->get('/triggerEvent/:h', function($eventId) use ($app) {
@@ -124,10 +161,29 @@ $app->get('/triggerEvent/:h', function($eventId) use ($app) {
 
 $app->get('/timeSchedules', function() use ($app) {
 	$hm = new homeMaticInstance();
-    $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
-	$app->render('timeschedules.html', array("homeStatus" => $homeStatus));
+	$app->render('timeschedules.html', array("hm" => $hm));
 });
 
+$app->get('/nad/:h', function($action) use ($app) {
+    $nad = new nadClient("http://volumio.local:3333/", 10);
+    switch($action) {
+    case "model":
+        $data["model"] = $nad->getModel();
+        break;
+    case "power":
+        $data["power"] = $nad->getPower();
+        break;
+    case "source":
+        $data["source"] = $nad->getSource();
+        break;
+    case "volume":
+        $data["volume"] = $nad->getVolume();
+        break;
+    default:
+        $data[$action] = null;
+    }
+    echo json_encode($data);
+});
 
 $app->run();
 

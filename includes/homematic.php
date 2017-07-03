@@ -136,6 +136,12 @@ class HomeMaticInstance
                 $entry["message"] = "An undefined error has occured with this device (payload: '" . $message[3] . "').";
                 $return[] = $entry;
                 break;
+            case "FAULT_REPORTING":
+                if($message[3] != 6) {
+                    $entry["message"] = "Unknown message type '" . $message[2] . "' with payload '" . $message[3] . "' occured.";
+                    $return[] = $entry;
+                }
+                break;
             default:
                 $entry["message"] = "Unknown message type '" . $message[2] . "' with payload '" . $message[3] . "' occured.";
                 $return[] = $entry;
@@ -416,6 +422,10 @@ class HomeMaticInstance
 
     function triggerEvent($eventId) {
         return $this->events->triggerEvent($eventId);
+    }
+
+    function runscript($script, $params) {
+		return $this->XMLRPC->send("runScript", array($script, $params, false));
     }
 
     function getPrometheusStats(){

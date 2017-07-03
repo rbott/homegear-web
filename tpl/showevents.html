@@ -1,12 +1,12 @@
 {% extends "index.html" %}
 
 {% block content %}
-<div class="container">
+<div class="container-fluid">
 	<div class="row">
 		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-			<div class="panel panel-default settings-box">
-				<div class="panel-heading">Configured Events List</div>
-				<div class="panel-body">
+			<div class="card">
+                <div class="header"><h4 class="title">Configured Events List</h4></div>
+				<div class="content">
 					<div class="table-responsive">
 						<table class="table table-striped">
 							<tr>
@@ -21,15 +21,14 @@
 								<td>{{ event.eventId }}</td>
                                 <td>{{ event.eventTrigger }}:<br>{{ event.peerVariable }}</td>
                                 <td>{{ event.eventMethod }}<br>{{ event.eventMethodParams }}</td>
-                                <td><a class="btn btn-default" href="/triggerEvent/{{ event.eventId }}" role="button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></a></td>
+                                <td><a class="btn btn-default" href="/triggerEvent/{{ event.eventId }}" role="button"><span class="pe-7s-play" aria-hidden="true"></span></a></td>
 							</tr>
 {% endfor %}	
 						</table>
-						</div>
-					</div>
+				    </div>
 				</div>
-			</div>	    
-		</div>
+			</div>
+		</div>	    
 	</div>
 </div>
 {% endblock %}

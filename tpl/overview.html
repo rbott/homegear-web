@@ -1,25 +1,16 @@
 {% extends "index.html" %}
 
 {% block content %}
-<div class="container">
-{% for msg in serviceMessages %}
-    <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="alert alert-danger" role="alert">
-                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                <span class="sr-only">Error:</span>
-                {{ msg.deviceName }}: {{ msg.message }}
-            </div>
-        </div>
-    </div>
-{% endfor %}
-	<div class="row">
-{% for device in devices %}
+    <div class="container-fluid">
+        <div class="row">
+{% for device in hm.getAllDevices(true) %}
 {% if device.type != "switch" %}
-		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-			<div class="panel panel-default">
-				<div class="panel-heading">{{ device.name }}</div>
-				<div class="panel-body">
+            <div class="col-sm-4 col-md-3">
+                <div class="card" style="height: 150px;">
+                    <div class="header">
+                        <h4 class="title">{{ device.name }}</h4>
+                    </div>
+                    <div class="content">
 {% if device.type == "valve" or device.type == "envsensor" %}
 					<div class="row">
 						<div class="col-xs-4">
@@ -78,11 +69,47 @@
 						</div>
 					</div>
 {% endif %}
-				</div>
-			</div>	    
-		</div>
+                 </div>
+             </div>	    
+         </div>
 {% endif %}
 {% endfor %}
-	</div>
-</div>
+            <div class="col-sm-4 col-md-3">
+                <div class="card" style="height: 150px;">
+                    <div class="header">
+                        <h4 class="title">NAD C368 Amp</h4>
+                    </div>
+                    <div class="content">
+					<div class="row">
+						<div class="col-xs-4">
+							Power:
+						</div>
+						<div class="col-xs-8" id="nadAmpPower"></div>
+					</div>
+					<div class="row">
+						<div class="col-xs-4">
+							Volume:
+						</div>
+						<div class="col-xs-8" id="nadAmpVolume"></div>
+					</div>
+					<div class="row">
+						<div class="col-xs-4">
+							Source:
+						</div>
+						<div class="col-xs-8" id="nadAmpSource"></div>
+					</div>
+                 </div>
+             </div>	    
+         </div>
+
+        </div>
+    </div>
+<script type="text/javascript">
+	$(document).ready(function(){
+    	nadGet("power", "nadAmpPower");
+        nadGet("volume", "nadAmpVolume");
+        nadGet("source", "nadAmpSource");
+	});
+</script>
 {% endblock %}
+

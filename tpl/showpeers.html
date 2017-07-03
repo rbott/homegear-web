@@ -1,12 +1,12 @@
 {% extends "index.html" %}
 
 {% block content %}
-<div class="container">
+<div class="container-fluid">
 	<div class="row">
 		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-			<div class="panel panel-default settings-box">
-				<div class="panel-heading">Peers List</div>
-				<div class="panel-body">
+			<div class="card">
+                <div class="header"><h4 class="title">Peers List</h4></div>
+				<div class="content">
 					<div class="table-responsive">
 						<table class="table table-striped">
 							<tr>
@@ -26,19 +26,18 @@
 							</tr>
 {% endfor %}	
 						</table>
-						</div>
 					</div>
 					{% if peeringStatus %}
 					<div class="text-center alert alert-warning" role="alert">
 						Peering Active, Remaining Seconds: {{ peeringTimeout }}
-					</p>
+					</div>
 						{% else %}
 					<div class="form-group text-center">
 						<form method="POST" action="/enablePeering"><input type="submit" class="btn btn-primary" name="enablePeering" value="Activate Peering (60 seconds)"></form>
 					</div>
 						{% endif %}
 				</div>
-			</div>	    
+            </div>
 		</div>
 	</div>
 </div>

@@ -5,6 +5,21 @@ $config = array(
         "redis_host" => "localhost",
         "redis_port" => 6379,
     ),
+    "actions" => array(
+        array(
+            "name" => "Some Action Name",
+            "action" => "script",
+            "path" => "/usr/local/bin/somescript.py"
+        ),
+        array(
+            "name" => "Some Other Action",
+            "action" => "url",
+            "url" => "http://localhost:8080/myApi/doSomething",
+            "method" => "GET",
+            "data" => null
+        ),
+    ),
 );
+
 
 ?>

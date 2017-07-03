@@ -55,6 +55,11 @@ class nadClient {
         if($data->error == 0) return $data->value;
     }
 
+    function getSource() {
+        $data = $this->getValue("source");
+        if($data->error == 0) return $data->value;
+    }
+
     function getVolume() {
         $data = $this->getValue("volume");
         if($data->error == 0) return $data->value;
