@@ -18,7 +18,8 @@ class HomeMaticInstance
 	private $XMLRPC;
 	private $valves = array();
     private $envSensors = array();
-    private $pwrSensors = array();
+	private $pwrSensors = array();
+	private $switches = array();
     private $peeringTimeout = -1;
     private $config = array();
 
