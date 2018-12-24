@@ -68,6 +68,14 @@
 					</div>
 					<button type="submit" class="btn btn-primary">Link Peers</button>
 				</form>
+				<br>
+				<p class="text-center">
+{% for device in devices %}
+{% if device.typeString == "HM-CC-RT-DN" and device.hasLinks %}
+{{ device.name }} is linked to: {% for peers in device.links %} {{ peers.senderName }}{% endfor %}<br>
+{% endif %}
+{% endfor %}
+				</p>
 				</div>
 			</div>	    
 		</div>

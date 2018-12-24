@@ -254,6 +254,8 @@ class HomeMaticInstance
 					"address" => $valve->getAddress(),
 					"typeString" => $valve->getTypeString(),
 					"type" => "valve",
+					"hasLinks" => $valve->hasLinks(),
+					"links" => $valve->getLinks(),
 					"batteryLow" => $valve->isBatteryLow(),
 					"batteryVoltage" => $valve->getBatteryVoltage());
 			}
@@ -263,6 +265,8 @@ class HomeMaticInstance
 					"address" => $valve->getAddress(),
 					"typeString" => $valve->getTypeString(),
 					"type" => "valve",
+					"hasLinks" => $valve->hasLinks(),
+					"links" => $valve->getLinks(),
 					"valveState" => $valve->getValveState(),
 					"tempSensor" => $valve->getTempSensor(),
 					"targetTemp" => $valve->getTargetTemp(),
@@ -281,6 +285,8 @@ class HomeMaticInstance
 					"address" => $sensor->getAddress(),
 					"typeString" => $sensor->getTypeString(),
 					"type" => "envsensor",
+					"hasLinks" => $valve->hasLinks(),
+					"links" => $valve->getLinks(),
 					"batteryLow" => $sensor->isBatteryLow());
 			}
 			else {
@@ -289,6 +295,8 @@ class HomeMaticInstance
 					"address" => $sensor->getAddress(),
 					"typeString" => $sensor->getTypeString(),
 					"type" => "envsensor",
+					"hasLinks" => $valve->hasLinks(),
+					"links" => $valve->getLinks(),
 					"tempSensor" => $sensor->getTempSensor(),
 					"humidSensor" => $sensor->getHumidSensor(),
 					"batteryLow" => $sensor->isBatteryLow());
@@ -301,6 +309,8 @@ class HomeMaticInstance
 					"address" => $sensor->getAddress(),
 					"typeString" => $sensor->getTypeString(),
 					"type" => "pwrsensor",
+					"hasLinks" => $valve->hasLinks(),
+					"links" => $valve->getLinks(),
 					"batteryLow" => $sensor->isBatteryLow());
 			}
 			else {
@@ -309,6 +319,8 @@ class HomeMaticInstance
 					"address" => $sensor->getAddress(),
 					"typeString" => $sensor->getTypeString(),
 					"type" => "pwrsensor",
+					"hasLinks" => $valve->hasLinks(),
+					"links" => $valve->getLinks(),
 					"enabled" => $sensor->isEnabled(),
 					"power" => $sensor->getPower(),
 					"batteryLow" => $sensor->isBatteryLow());
@@ -320,6 +332,8 @@ class HomeMaticInstance
 				"address" => $switch->getAddress(),
 				"typeString" => $switch->getTypeString(),
 				"type" => "switch",
+				"hasLinks" => $valve->hasLinks(),
+				"links" => $valve->getLinks(),
 				"batteryLow" => $switch->isBatteryLow());
 		}
 		return $devices;
@@ -421,7 +435,6 @@ class HomeMaticInstance
 
 	function linkPeers($masterPeerId, $slavePeerId) {
 		print_r($this->XMLRPC->send("addLink", array(intval($slavePeerId), 1, intval($masterPeerId), 1)));
-		die();
 	}
 
 	function getPrometheusStats(){

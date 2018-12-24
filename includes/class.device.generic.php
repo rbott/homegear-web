@@ -9,6 +9,7 @@ class HomeMaticGenericDevice {
 	protected $name;
 	protected $hasBattery = true;
 	protected $lowBattery = false;
+	protected $links = array();
 
 	function __construct($address, $channels, $xmlrpc) {
 		$this->XMLRPC = $xmlrpc;
@@ -19,6 +20,21 @@ class HomeMaticGenericDevice {
 		$peerData = $this->XMLRPC->send("getDeviceDescription", array(intval($this->peerId),0));
 		$this->typeString = $peerData["PARENT_TYPE"];
 		$this->name = $this->XMLRPC->send("getName", array(intval($this->peerId)));
+
+		$links = $this->XMLRPC->send("getLinks",array($this->peerId));
+		if(!empty($links)) {
+			foreach($links AS $link) {
+				$this->links[] = array(
+					"receiverName" => $this->XMLRPC->send("getName", array($link["RECEIVER_ID"])),
+					"receiverId" => $link["RECEIVER_ID"],
+					"receiverChannel" => $link["RECEIVER_ID"],
+					"senderName" => $this->XMLRPC->send("getName", array($link["SENDER_ID"])),
+					"senderId" => $link["SENDER_ID"],
+					"senderChannel" => $link["SENDER_ID"]
+				);
+			}
+		}
+
 	}
 
 	function getName() {
@@ -35,6 +51,15 @@ class HomeMaticGenericDevice {
 
 	function getTypeString() {
 		return $this->typeString;
+	}
+
+	function getLinks() {
+		return $this->links;
+	}
+
+	function hasLinks() {
+		if(count($this->links) > 0) return true;
+		else return false;
 	}
 
 	function isBatteryLow() {
