@@ -25,25 +25,25 @@ $app->get('/', function() use ($app) {
 });
 
 $app->get('/metrics', function() use ($app) {
-    $app->response->headers->set("Content-Type", "text/plain; version=0.0.4");
-    $hm = new homeMaticInstance();
-    $stats = $hm->getPrometheusStats();
-    echo $stats;
+	$app->response->headers->set("Content-Type", "text/plain; version=0.0.4");
+	$hm = new homeMaticInstance();
+	$stats = $hm->getPrometheusStats();
+	echo $stats;
 });
 
 $app->get('/overview', function() use ($app) {
 	$hm = new homeMaticInstance();
-    $devices = $hm->getAllDevices(true);
-    $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
-    $serviceMessages = $hm->getServiceMessages();
+	$devices = $hm->getAllDevices(true);
+	$homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
+	$serviceMessages = $hm->getServiceMessages();
 	$app->render('overview.html', array("devices" => $devices, "serviceMessages" => $serviceMessages, "homeStatus" => $homeStatus));
 });
 
 $app->get('/control', function() use ($app) {
 	$hm = new homeMaticInstance();
 	$devices = $hm->getAllDevices(true);
-    $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
-    $serviceMessages = $hm->getServiceMessages();
+	$homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
+	$serviceMessages = $hm->getServiceMessages();
 	$app->render('control.html', array("devices" => $devices, "serviceMessages" => $serviceMessages, "homeStatus" => $homeStatus));
 });
 
@@ -69,8 +69,8 @@ $app->post('/setAllTemp', function() use ($app) {
 
 $app->post('/togglePwr', function() use ($app) {
 	$hm = new homeMaticInstance();
-    if($sensor = $hm->getPwrSensorByPeerId($_POST["peerId"])) {
-        $sensor->togglePower();
+	if($sensor = $hm->getPwrSensorByPeerId($_POST["peerId"])) {
+		$sensor->togglePower();
 	}
 	Header("Location: /control");
 	exit;
@@ -79,14 +79,14 @@ $app->post('/togglePwr', function() use ($app) {
 $app->get('/valveDetails/:h', function($peerId) use ($app) {
 	$hm = new homeMaticInstance();
 	$device = $hm->getValveByPeerId($peerId);
-    $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
+	$homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
 	$app->render('valveDetails.html', array("device" => $device, "homeStatus" => $homeStatus));
 });
 
 
 $app->get('/showGraphs', function() use ($app) {
-    $hm = new homeMaticInstance();
-    $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
+	$hm = new homeMaticInstance();
+	$homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
 	$app->render('showgraphs.html', array("homeStatus" => $homeStatus));
 });
 
@@ -95,7 +95,7 @@ $app->get('/showPeers', function() use ($app) {
 	$devices = $hm->getAllDevices();
 	$peeringStatus = $hm->isPeering();
 	$peeringTimeout = $hm->getPeeringTimeout();
-    $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
+	$homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
 	$app->render('showpeers.html', array("devices" => $devices, "peeringStatus" => $peeringStatus, "peeringTimeout" => $peeringTimeout, "homeStatus" => $homeStatus));
 });
 
@@ -109,22 +109,22 @@ $app->post('/enablePeering', function() use ($app) {
 });
 
 $app->get('/showEvents', function() use ($app) {
-    $hm = new homeMaticInstance();
-    $events = $hm->getEvents();
-    $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
+	$hm = new homeMaticInstance();
+	$events = $hm->getEvents();
+	$homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
 	$app->render('showevents.html', array("homeStatus" => $homeStatus, "events" => $events));
 });
 
 $app->get('/triggerEvent/:h', function($eventId) use ($app) {
-    $hm = new homeMaticInstance();
-    $events = $hm->triggerEvent($eventId);
-    Header("Location: /showEvents");
-    exit;
+	$hm = new homeMaticInstance();
+	$events = $hm->triggerEvent($eventId);
+	Header("Location: /showEvents");
+	exit;
 });
 
 $app->get('/timeSchedules', function() use ($app) {
 	$hm = new homeMaticInstance();
-    $homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
+	$homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
 	$app->render('timeschedules.html', array("homeStatus" => $homeStatus));
 });
 

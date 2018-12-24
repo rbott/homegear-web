@@ -44,7 +44,7 @@ class tempsetInstance {
 			}
 		}
 	}
-	
+
 	function getTempset() {
 		$this->prepareTempset();
 		return $this->tempset;

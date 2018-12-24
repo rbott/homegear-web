@@ -2,15 +2,15 @@
 
 class HomeMaticPwrSensor extends HomeMaticGenericDevice {
 	private $enabled;
-    private $voltage;
-    private $frequency;
-    private $power;
-    private $current;
-    private $energyCounter;
+	private $voltage;
+	private $frequency;
+	private $power;
+	private $current;
+	private $energyCounter;
 
-    function __construct($address, $channels, $xmlrpc) {
-        parent::__construct($address, $channels, $xmlrpc);
-        $this->hasBattery = false;
+	function __construct($address, $channels, $xmlrpc) {
+		parent::__construct($address, $channels, $xmlrpc);
+		$this->hasBattery = false;
 	}
 
 	function isEnabled() {
@@ -21,7 +21,7 @@ class HomeMaticPwrSensor extends HomeMaticGenericDevice {
 	function getVoltage() {
 		$this->voltage = $this->XMLRPC->send("getValue", array(intval($this->peerId), 2, "VOLTAGE", false));
 		return $this->voltage;
-    }
+	}
 
 	function getFrequency() {
 		$this->frequency = $this->XMLRPC->send("getValue", array(intval($this->peerId), 2, "FREQUENCY", false));
@@ -33,32 +33,32 @@ class HomeMaticPwrSensor extends HomeMaticGenericDevice {
 		return $this->current;
 	}
 
-    function getPower() {
-        $this->isEnabled() ? $this->power = $this->XMLRPC->send("getValue", array(intval($this->peerId), 2, "POWER", false)) : $this->power = 0;
+	function getPower() {
+		$this->isEnabled() ? $this->power = $this->XMLRPC->send("getValue", array(intval($this->peerId), 2, "POWER", false)) : $this->power = 0;
 		return $this->power;
 	}
 
 	function getEnergyCounter() {
 		$this->energyCounter = $this->XMLRPC->send("getValue", array(intval($this->peerId), 2, "ENERGY_COUNTER", false));
 		return $this->energyCounter;
-    }
+	}
 
-    function enable() {
+	function enable() {
 		$this->XMLRPC->send("setValue", array(intval($this->peerId), 1, "STATE", true, true));
-    }
+	}
 
-    function disable() {
-        $this->XMLRPC->send("setValue", array(intval($this->peerId), 1, "STATE", false, true));
-    }
+	function disable() {
+		$this->XMLRPC->send("setValue", array(intval($this->peerId), 1, "STATE", false, true));
+	}
 
-    function togglePower() {
-        if($this->isEnabled()) {
-            $this->disable();
-        }
-        else {
-            $this->enable();
-        }
-    }
+	function togglePower() {
+		if($this->isEnabled()) {
+			$this->disable();
+		}
+		else {
+			$this->enable();
+		}
+	}
 
 }
 
