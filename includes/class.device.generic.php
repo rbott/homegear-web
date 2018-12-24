@@ -18,8 +18,7 @@ class HomeMaticGenericDevice {
 		$this->peerId = $peerId[0];
 		$peerData = $this->XMLRPC->send("getDeviceDescription", array(intval($this->peerId),0));
 		$this->typeString = $peerData["PARENT_TYPE"];
-		$name = $this->XMLRPC->send("getDeviceInfo", array(intval($this->peerId),array('NAME')));
-        $this->name = $name["NAME"];
+		$this->name = $this->XMLRPC->send("getName", array(intval($this->peerId)));
     }
 
 	function getName() {
