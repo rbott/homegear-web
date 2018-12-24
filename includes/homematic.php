@@ -419,6 +419,11 @@ class HomeMaticInstance
 		return $this->events->triggerEvent($eventId);
 	}
 
+	function linkPeers($masterPeerId, $slavePeerId) {
+		print_r($this->XMLRPC->send("addLink", array(intval($slavePeerId), 1, intval($masterPeerId), 1)));
+		die();
+	}
+
 	function getPrometheusStats(){
 		$devices = $this->getAllDevices(true);
 		$data = array();
@@ -498,7 +503,6 @@ class HomeMaticInstance
 		}
 		return $result;
 	}
-
 }
 
 

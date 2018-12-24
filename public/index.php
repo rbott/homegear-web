@@ -108,6 +108,15 @@ $app->post('/enablePeering', function() use ($app) {
 	exit;
 });
 
+$app->post('/linkPeers', function() use ($app) {
+	$hm = new homeMaticInstance();
+	if(is_numeric($_POST["masterPeer"]) && is_numeric($_POST["slavePeer"])) {
+		$hm->linkPeers($_POST["masterPeer"], $_POST["slavePeer"]);
+	}
+	Header("Location: /showPeers");
+	exit;
+});
+
 $app->get('/showEvents', function() use ($app) {
 	$hm = new homeMaticInstance();
 	$events = $hm->getEvents();

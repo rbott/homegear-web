@@ -14,7 +14,7 @@
 								<th>Peer Name</th>
 								<th>Address/Serial</th>
 								<th>Type</th>
-                                <th>Battery</th>
+								<th>Battery</th>
 							</tr>
 {% for device in devices %}
 							<tr>
@@ -22,21 +22,52 @@
 								<td>{{ device.name }}</td>
 								<td>{{ device.address }}</td>
 								<td>{{ device.typeString }}</td>
-                                <td>{% if not device.batteryLow %}OK{% else %}FAIL{% endif %}{% if device.type == "valve" %} ({{ device.batteryVoltage }}V){% endif %}</td>
+								<td>{% if not device.batteryLow %}OK{% else %}FAIL{% endif %}{% if device.type == "valve" %} ({{ device.batteryVoltage }}V){% endif %}</td>
 							</tr>
 {% endfor %}	
 						</table>
-						</div>
 					</div>
 					{% if peeringStatus %}
 					<div class="text-center alert alert-warning" role="alert">
 						Peering Active, Remaining Seconds: {{ peeringTimeout }}
 					</p>
-						{% else %}
+					{% else %}
 					<div class="form-group text-center">
 						<form method="POST" action="/enablePeering"><input type="submit" class="btn btn-primary" name="enablePeering" value="Activate Peering (60 seconds)"></form>
 					</div>
-						{% endif %}
+					{% endif %}
+				</div>
+			</div>	    
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<div class="panel panel-default settings-box">
+				<div class="panel-heading">Link Peers</div>
+				<div class="panel-body">
+				<form class="form-inline text-center" action="/linkPeers" method="post">
+					<div class="form-group">
+						<label for="masterPeer">Master Peer</label>
+						<select class="form-control" id="masterPeer" name="masterPeer">
+{% for device in devices %}
+{% if device.typeString == "HM-CC-RT-DN" %}
+							<option value="{{ device.peerId }}">{{ device.name }}</option>
+{% endif %}
+{% endfor %}
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="slavePeer">Slave Peer</label>
+						<select class="form-control" id="slavePeer" name="slavePeer">
+{% for device in devices %}
+{% if device.typeString == "HM-WDS40-TH-I-2" %}
+							<option value="{{ device.peerId }}">{{ device.name }}</option>
+{% endif %}
+{% endfor %}
+						</select>
+					</div>
+					<button type="submit" class="btn btn-primary">Link Peers</button>
+				</form>
 				</div>
 			</div>	    
 		</div>
