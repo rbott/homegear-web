@@ -113,11 +113,13 @@ class HomeMaticInstance
 		$messages = $this->XMLRPC->send("getServiceMessages", array(true));
 		$return = array();
 		foreach($messages AS $message) {
-			$entry = array( "id" => $message[0],
-				"deviceName" => $this->getDeviceByPeerId($message[0])->getName(),
-				"type" => $message[2],
-				"value" => $message[3]);
-			switch ($message[2]) {
+			if(is_numeric($message["PEER_ID"])) {
+			$entry = array( "id" => $message["PEER_ID"],
+				"deviceName" => $this->getDeviceByPeerId($message["PEER_ID"])->getName(),
+				"type" => $message["TYPE"],
+				"value" => $message["VALUE"]);
+			}
+			switch ($message["MESSAGE"]) {
 			case "STICKY_UNREACH":
 				# we ignore these for now
 				break;
