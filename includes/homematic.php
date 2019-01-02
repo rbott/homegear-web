@@ -46,6 +46,7 @@ class HomeMaticInstance
 					$this->valves[] = new HomeMaticValve($device["ADDRESS"], $device["CHANNELS"], $this->XMLRPC);
 					break;
 				case "HM-ES-PMSw1-Pl":
+				case "HM-ES-PMSw1-Pl-DN-R1":
 					$this->pwrSensors[] = new HomeMaticPwrSensor($device["ADDRESS"], $device["CHANNELS"], $this->XMLRPC);
 					break;
 				case "HM-PB-6-WM55":
