@@ -85,7 +85,7 @@ class HomeMaticValve extends HomeMaticGenericDevice {
 	}
 
 	function setTargetTemp($temp) {
-		print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "SET_TEMPERATURE", $temp, true)));
+		print_r($this->XMLRPC->send("setValue", array(intval($this->peerId), 4, "SET_TEMPERATURE", floatval($temp), true)));
 		usleep(500);
 	}
 
