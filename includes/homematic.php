@@ -50,6 +50,7 @@ class HomeMaticInstance
 					$this->pwrSensors[] = new HomeMaticPwrSensor($device["ADDRESS"], $device["CHANNELS"], $this->XMLRPC);
 					break;
 				case "HM-PB-6-WM55":
+				case "HM-RC-8":
 					$this->switches[] = new HomeMaticSwitch($device["ADDRESS"], $device["CHANNELS"], $this->XMLRPC);
 					break;
 				}
