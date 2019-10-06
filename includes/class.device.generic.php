@@ -13,25 +13,11 @@ class HomeMaticGenericDevice {
 	protected $links = array();
 
 	function __construct($address, $id, $type, $name, $xmlrpc) {
-		$this->log("Constructing new class for " . $address);
-		$startTime = microtime(true);
 		$this->XMLRPC = $xmlrpc;
 		$this->address = $address;
 		$this->peerId = $id;
 		$this->typeString = $type;
 		$this->name = $name;
-
-		$elapsedTime = microtime(true) - $startTime;
-		$this->log(sprintf("Finished constructing new class for %s (took: %fs)", $address, $elapsedTime));
-	}
-
-	function log($line) {
-		$time = sprintf("%f", microtime(true));
-		$fp = @fopen("/tmp/homematic.log","a");
-		if($fp) {
-			fputs($fp, $time . " " . $line . "\n");
-			fclose($fp);
-		}
 	}
 
 	function getName() {
