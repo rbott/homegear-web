@@ -395,7 +395,6 @@ class HomeMaticInstance
 					"hasLinks" => $dimmer->hasLinks(),
 					"links" => $dimmer->getLinks(),
 					"enabled" => $dimmer->isEnabled(),
-					"power" => $dimmer->getPower(),
 					"batteryLow" => $dimmer->isBatteryLow());
 			}
 		}
