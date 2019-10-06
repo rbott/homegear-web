@@ -2,11 +2,7 @@
 
 class HomeMaticDimmer extends HomeMaticGenericDevice {
 	private $enabled;
-	private $voltage;
-	private $frequency;
-	private $power;
-	private $current;
-	private $energyCounter;
+	private $level;
 
 	function __construct($address, $channels, $xmlrpc) {
 		parent::__construct($address, $channels, $xmlrpc);
@@ -32,6 +28,11 @@ class HomeMaticDimmer extends HomeMaticGenericDevice {
 		$this->XMLRPC->send("setValue", array(intval($this->peerId), 1, "LEVEL", 0.0 , true));
 	}
 
+	function getLevel() {
+		$this->level = floatval($this->XMLRPC->send("getValue", array(intval($this->peerId), 1, "LEVEL", false)));
+		return $this->level;
+	}
+
 	function setLevel($level) {
 		$this->XMLRPC->send("setValue", array(intval($this->peerId), 1, "LEVEL", floatval($level), true));
 	}
@@ -46,7 +47,7 @@ class HomeMaticDimmer extends HomeMaticGenericDevice {
 	}
 
 	function toggleLevel($level) {
-		if($this->isEnabled()) {
+		if($this->isEnabled() && $this->getLevel() == $level) {
 			$this->disable();
 		}
 		else {
