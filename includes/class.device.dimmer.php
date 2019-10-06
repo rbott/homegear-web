@@ -4,6 +4,11 @@ class HomeMaticDimmer extends HomeMaticGenericDevice {
 	private $enabled;
 	private $level;
 
+	function __construct($address, $id, $type, $name, $xmlrpc) {
+		parent::__construct($address, $id, $type, $name, $xmlrpc);
+		$this->typeClass = "dimmer";
+	}
+
 	function isEnabled() {
 		$data = floatval($this->XMLRPC->send("getValue", array(intval($this->peerId), 1, "LEVEL", false)));
 		if($data > 0) {

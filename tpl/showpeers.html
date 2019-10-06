@@ -19,12 +19,12 @@
 							</tr>
 {% for device in devices %}
 							<tr>
-								<td>{{ device.peerId }}</td>
-								<td>{{ device.name }}</td>
-								<td>{{ device.address }}</td>
-								<td>{{ device.typeString }}</td>
-								<td>{{ device.rssi }} dBm</td>
-								<td>{% if device.hasBattery %}{% if not device.batteryLow %}OK{% else %}FAIL{% endif %} ({{ device.batteryVoltage }}V){% else %}n/a{% endif %}</td>
+								<td>{{ device.getPeerId() }}</td>
+								<td>{{ device.getName() }}</td>
+								<td>{{ device.getAddress() }}</td>
+								<td>{{ device.getTypeString() }}</td>
+								<td>{{ device.getRssi() }} dBm</td>
+								<td>{% if device.hasBattery() %}{% if not device.batteryLow %}OK{% else %}FAIL{% endif %} ({{ device.batteryVoltage }}V){% else %}n/a{% endif %}</td>
 							</tr>
 {% endfor %}	
 						</table>
@@ -52,8 +52,8 @@
 						<label for="masterPeer">Master Peer</label>
 						<select class="form-control" id="masterPeer" name="masterPeer">
 {% for device in devices %}
-{% if device.typeString == "HM-CC-RT-DN" %}
-							<option value="{{ device.peerId }}">{{ device.name }}</option>
+{% if device.getTypeString() == "HM-CC-RT-DN" %}
+							<option value="{{ device.getPeerId() }}">{{ device.getName() }}</option>
 {% endif %}
 {% endfor %}
 						</select>
@@ -62,8 +62,8 @@
 						<label for="slavePeer">Slave Peer</label>
 						<select class="form-control" id="slavePeer" name="slavePeer">
 {% for device in devices %}
-{% if device.typeString == "HM-WDS40-TH-I-2" %}
-							<option value="{{ device.peerId }}">{{ device.name }}</option>
+{% if device.getTypeString() == "HM-WDS40-TH-I-2" %}
+							<option value="{{ device.getPeerId() }}">{{ device.getName() }}</option>
 {% endif %}
 {% endfor %}
 						</select>
@@ -73,8 +73,8 @@
 				<br>
 				<p class="text-center">
 {% for device in devices %}
-{% if device.typeString == "HM-CC-RT-DN" and device.hasLinks %}
-{{ device.name }} is linked to: {% for peers in device.links %} {{ peers.senderName }}{% endfor %}<br>
+{% if device.getTypeString() == "HM-CC-RT-DN" and device.hasLinks %}
+{{ device.getName() }} is linked to: {% for peers in device.links %} {{ peers.senderName }}{% endfor %}<br>
 {% endif %}
 {% endfor %}
 				</p>

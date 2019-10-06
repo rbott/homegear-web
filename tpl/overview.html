@@ -15,12 +15,12 @@
 {% endfor %}
 	<div class="row">
 {% for device in devices %}
-{% if device.type != "switch" %}
+{% if device.getType() != "switch" %}
 		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
 			<div class="panel panel-default">
-				<div class="panel-heading">{{ device.name }}</div>
+				<div class="panel-heading">{{ device.getName() }}</div>
 				<div class="panel-body">
-{% if device.type == "valve" or device.type == "envsensor" %}
+{% if device.getType() == "valve" or device.getType() == "envsensor" %}
 					<div class="row">
 						<div class="col-xs-4">
 							Temperatur:
@@ -47,7 +47,7 @@
 							</div>
 						</div>
 					</div>{% endif %}
-{% if device.type == "valve" %}
+{% if device.getType() == "valve" %}
 					<div class="row">
 						<div class="col-xs-4">
 							Valve:
@@ -60,7 +60,7 @@
 							</div>
 						</div>
 					</div>{% endif %}
-{% if device.type == "pwrsensor" %}
+{% if device.getType() == "pwrsensor" %}
 					<div class="row">
 						<div class="col-xs-4">
 							State:

@@ -33,7 +33,7 @@ $app->get('/metrics', function() use ($app) {
 
 $app->get('/overview', function() use ($app) {
 	$hm = new homeMaticInstance();
-	$devices = $hm->getAllDevices(true);
+	$devices = $hm->getAllDevices();
 	$homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
 	$serviceMessages = $hm->getServiceMessages();
 	$app->render('overview.html', array("devices" => $devices, "serviceMessages" => $serviceMessages, "homeStatus" => $homeStatus));
@@ -41,7 +41,7 @@ $app->get('/overview', function() use ($app) {
 
 $app->get('/control', function() use ($app) {
 	$hm = new homeMaticInstance();
-	$devices = $hm->getAllDevices(true);
+	$devices = $hm->getAllDevices();
 	$homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
 	$serviceMessages = $hm->getServiceMessages();
 	$app->render('control.html', array("devices" => $devices, "serviceMessages" => $serviceMessages, "homeStatus" => $homeStatus));
@@ -81,13 +81,6 @@ $app->get('/valveDetails/:h', function($peerId) use ($app) {
 	$device = $hm->getValveByPeerId($peerId);
 	$homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
 	$app->render('valveDetails.html', array("device" => $device, "homeStatus" => $homeStatus));
-});
-
-
-$app->get('/showGraphs', function() use ($app) {
-	$hm = new homeMaticInstance();
-	$homeStatus = ($hm->presenceEnabled() ? ($hm->isHome() ? "homeStatus_home" : "homeStatus_nothome") : "");
-	$app->render('showgraphs.html', array("homeStatus" => $homeStatus));
 });
 
 $app->get('/showPeers', function() use ($app) {

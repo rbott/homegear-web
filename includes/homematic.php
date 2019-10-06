@@ -282,127 +282,8 @@ class HomeMaticInstance
 		return $names;
 	}
 
-	function getAllDevices($withState = false) {
-		$devices = array();
-		foreach($this->valves AS $valve) {
-			if(!$withState) {
-				$devices[] = array( "name" => $valve->getName(),
-					"peerId" => $valve->getPeerId(),
-					"address" => $valve->getAddress(),
-					"typeString" => $valve->getTypeString(),
-					"type" => "valve",
-					"rssi" => $valve->getRssi(),
-					"hasLinks" => $valve->hasLinks(),
-					"links" => $valve->getLinks(),
-					"hasBattery" => $valve->hasBattery(),
-					"batteryLow" => $valve->isBatteryLow(),
-					"batteryVoltage" => $valve->getBatteryVoltage());
-			}
-			else {
-				$devices[] = array( "name" => $valve->getName(),
-					"peerId" => $valve->getPeerId(),
-					"address" => $valve->getAddress(),
-					"typeString" => $valve->getTypeString(),
-					"type" => "valve",
-					"rssi" => $valve->getRssi(),
-					"hasLinks" => $valve->hasLinks(),
-					"links" => $valve->getLinks(),
-					"valveState" => $valve->getValveState(),
-					"tempSensor" => $valve->getTempSensor(),
-					"targetTemp" => $valve->getTargetTemp(),
-					"controlMode" => $valve->getControlMode(),
-					"tempFallMode" => $valve->getTempFallMode(),
-					"tempFallTemp" => $valve->getTempFallTemp(),
-					"tempFallWindow" => $valve->getTempFallWindow(),
-					"hasBattery" => $valve->hasBattery(),
-					"batteryLow" => $valve->isBatteryLow(),
-					"batteryVoltage" => $valve->getBatteryVoltage());
-			}
-		}
-		foreach($this->envSensors AS $sensor) {
-			if(!$withState) {
-				$devices[] = array( "name" => $sensor->getName(),
-					"peerId" => $sensor->getPeerId(),
-					"address" => $sensor->getAddress(),
-					"typeString" => $sensor->getTypeString(),
-					"type" => "envsensor",
-					"rssi" => $sensor->getRssi(),
-					"hasLinks" => $sensor->hasLinks(),
-					"links" => $sensor->getLinks(),
-					"hasBattery" => $sensor->hasBattery(),
-					"batteryLow" => $sensor->isBatteryLow(),
-					"batteryVoltage" => $sensor->getBatteryVoltage());
-			}
-			else {
-				$devices[] = array( "name" => $sensor->getName(),
-					"peerId" => $sensor->getPeerId(),
-					"address" => $sensor->getAddress(),
-					"typeString" => $sensor->getTypeString(),
-					"type" => "envsensor",
-					"rssi" => $sensor->getRssi(),
-					"hasLinks" => $sensor->hasLinks(),
-					"links" => $sensor->getLinks(),
-					"tempSensor" => $sensor->getTempSensor(),
-					"humidSensor" => $sensor->getHumidSensor(),
-					"hasBattery" => $sensor->hasBattery(),
-					"batteryLow" => $sensor->isBatteryLow(),
-					"batteryVoltage" => $sensor->getBatteryVoltage());
-			}
-		}
-		foreach($this->pwrSensors AS $sensor) {
-			if(!$withState) {
-				$devices[] = array( "name" => $sensor->getName(),
-					"peerId" => $sensor->getPeerId(),
-					"address" => $sensor->getAddress(),
-					"typeString" => $sensor->getTypeString(),
-					"type" => "pwrsensor",
-					"rssi" => $sensor->getRssi(),
-					"hasLinks" => $sensor->hasLinks(),
-					"links" => $sensor->getLinks(),
-					"hasBattery" => $sensor->hasBattery(),
-					"batteryLow" => $sensor->isBatteryLow());
-			}
-			else {
-				$devices[] = array( "name" => $sensor->getName(),
-					"peerId" => $sensor->getPeerId(),
-					"address" => $sensor->getAddress(),
-					"typeString" => $sensor->getTypeString(),
-					"type" => "pwrsensor",
-					"rssi" => $sensor->getRssi(),
-					"hasLinks" => $sensor->hasLinks(),
-					"links" => $sensor->getLinks(),
-					"enabled" => $sensor->isEnabled(),
-					"power" => $sensor->getPower(),
-					"hasBattery" => $sensor->hasBattery(),
-					"batteryLow" => $sensor->isBatteryLow());
-			}
-		}
-		foreach($this->switches AS $switch) {
-			$devices[] = array( "name" => $switch->getName(),
-				"peerId" => $switch->getPeerId(),
-				"address" => $switch->getAddress(),
-				"typeString" => $switch->getTypeString(),
-				"type" => "switch",
-				"rssi" => $switch->getRssi(),
-				"hasLinks" => $switch->hasLinks(),
-				"links" => $switch->getLinks(),
-				"hasBattery" => $switch->hasBattery(),
-				"batteryLow" => $switch->isBatteryLow(),
-				"batteryVoltage" => $switch->getBatteryVoltage());
-		}
-		foreach($this->dimmers AS $dimmer) {
-			$devices[] = array( "name" => $dimmer->getName(),
-				"peerId" => $dimmer->getPeerId(),
-				"address" => $dimmer->getAddress(),
-				"typeString" => $dimmer->getTypeString(),
-				"type" => "dimmer",
-				"rssi" => $dimmer->getRssi(),
-				"hasLinks" => $dimmer->hasLinks(),
-				"links" => $dimmer->getLinks(),
-				"hasBattery" => $dimmer->hasBattery(),
-				"batteryLow" => $dimmer->isBatteryLow());
-		}
-
+	function getAllDevices() {
+		$devices = array_merge($this->valves, $this->envSensors, $this->pwrSensors, $this->dimmers, $this->switches);
 		return $devices;
 	}
 
@@ -505,31 +386,32 @@ class HomeMaticInstance
 	}
 
 	function getPrometheusStats(){
-		$devices = $this->getAllDevices(true);
+		$devices = $this->getAllDevices();
 		$data = array();
 		$result = "";
 		foreach($devices AS $device) {
-			switch($device["type"]) {
+			$data["generic"]["rssi"][$device->getName()] = $device->getRssi();
+			switch($device->getType()) {
 			case "valve":
-				$data["valve"]["temp"][$device["name"]] = $device["tempSensor"];
-				$data["valve"]["targettemp"][$device["name"]] = $device["targetTemp"];
-				$data["valve"]["valve"][$device["name"]] = $device["valveState"];
-				$data["valve"]["battery"][$device["name"]] = $device["batteryVoltage"];
+				$data["valve"]["temp"][$device->getName()] = $device->getTempSensor();
+				$data["valve"]["targettemp"][$device->getName()] = $device->getTargetTemp();
+				$data["valve"]["valve"][$device->getName()] = $device->getValveState();
+				$data["valve"]["battery"][$device->getName()] = $device->getBatteryVoltage();
 				break;
 			case "envsensor":
-				$data["envsensor"]["temp"][$device["name"]] = $device["tempSensor"];
-				$data["envsensor"]["humidity"][$device["name"]] = $device["humidSensor"];
+				$data["envsensor"]["temp"][$device->getName()] = $device->getTempSensor();
+				$data["envsensor"]["humidity"][$device->getName()] = $device->getHumidSensor();
 				break;
 			case "pwrsensor":
-				$data["pwrsensor"]["power"][$device["name"]] = $device["power"];
-				$data["pwrsensor"]["enabled"][$device["name"]] = $device["enabled"];
-				$sensor = $this->getPwrSensorByName($device["name"]);
-				$data["pwrsensor"]["voltage"][$device["name"]] = $sensor->getVoltage();
-				$data["pwrsensor"]["current"][$device["name"]] = $sensor->getCurrent();
-				$data["pwrsensor"]["energyCounter"][$device["name"]] = $sensor->getEnergyCounter();
+				$data["pwrsensor"]["power"][$device->getName()] = $device->getPower();
+				$data["pwrsensor"]["enabled"][$device->getName()] = $device->isEnabled();
+				$sensor = $this->getPwrSensorByName($device->getName());
+				$data["pwrsensor"]["voltage"][$device->getName()] = $sensor->getVoltage();
+				$data["pwrsensor"]["current"][$device->getName()] = $sensor->getCurrent();
+				$data["pwrsensor"]["energyCounter"][$device->getName()] = $sensor->getEnergyCounter();
 				break;
 			case "dimmer":
-				$data["dimmer"]["level"][$device["name"]] = $device["level"];
+				$data["dimmer"]["level"][$device->getName()] = $device->getLevel();
 				break;
 			}
 		}
@@ -587,6 +469,12 @@ class HomeMaticInstance
 				foreach($device["level"] AS $name => $level) {
 					$level = $level * 100;
 					$result .= sprintf("homematic_%s_level{name=\"%s\"} %d\n", $type, $name, $level);
+				}
+			}
+			if($type == "generic") {
+				$result .= sprintf("# TYPE homematic_%s_rssi gauge\n", $type);
+				foreach($device["rssi"] AS $name => $rssi) {
+					$result .= sprintf("homematic_%s_rssi{name=\"%s\"} %d\n", $type, $name, $rssi);
 				}
 			}
 		}

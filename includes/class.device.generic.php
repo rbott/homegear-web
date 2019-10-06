@@ -11,6 +11,7 @@ class HomeMaticGenericDevice {
 	protected $lowBattery = false;
 	protected $batteryVoltage = 0.0;
 	protected $links = array();
+	protected $typeClass = "undefined";
 
 	function __construct($address, $id, $type, $name, $xmlrpc) {
 		$this->XMLRPC = $xmlrpc;
@@ -91,6 +92,10 @@ class HomeMaticGenericDevice {
 	function setParamset($paramset, $channel = 0, $type = "VALUES") {
 		$this->XMLRPC->send("putParamset", array(intval($this->peerId), $channel, $type, $paramset));
 		usleep(500);
+	}
+
+	function getType() {
+		return $this->typeClass;
 	}
 
 }

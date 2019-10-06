@@ -57,7 +57,7 @@ $lastAvgValueFile = "/tmp/average-temp.txt";
 # homegear stuff
 include_once($BASE_PATH . "/../includes/homematic.php");
 $home = new HomeMaticInstance;
-$devices = $home->getAllDevices(true);
+$devices = $home->getAllDevices();
 
 # redis stuff
 include_once($BASE_PATH . "/../includes/redis/redis.php");
@@ -68,8 +68,8 @@ $redis = new redis_cli($config["presence"]["redis_host"], $config["presence"]["r
 ##########################################################
 $temperatures = array();
 foreach($devices AS $device) {
-	if(!empty($device["tempSensor"])) {
-		$temperatures[] = $device["tempSensor"];
+	if($device instanceOf HomeMaticEnvSensors || $device instanceOf HomeMaticValve) {
+		$temperatures[] = $device->getTempSensor();
 	}
 }
 
@@ -128,8 +128,8 @@ if($avgTemp >= 28 && $lastAvgValue < 28) {
 # get temperatures again, this time only the target temperatures of valves
 $temperatures = array();
 foreach($devices AS $device) {
-	if($device["type"] == "valve") {
-		$temperatures[] = $device["targetTemp"];
+	if($device instanceOf HomeMaticValve) {
+		$temperatures[] = $device->getTargetTemp;
 	}
 }
 
