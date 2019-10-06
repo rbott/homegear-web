@@ -30,4 +30,13 @@ $hm->events->addEvent(1, 5, "sleep_valve_22", "PRESS_SHORT", 8, "setPeerNamesTem
 $hm->events->delEvent("living_valve_22");
 $hm->events->addEvent(1, 3, "living_valve_22", "PRESS_SHORT", 8, "setPeerNamesTemp.php", "Heizung-Wohnzimmer Heizung-Esszimmer 22");
 
+$hm->events->delEvent("living_valve_22_remote");
+#$hm->events->addEvent(12, 2, "living_valve_22_remote", "PRESS_SHORT", 8, "setPeerNamesTemp.php", "Heizung-Wohnzimmer Heizung-Esszimmer 22");
+
+$hm->events->delEvent("sleep_dim50_remote");
+$hm->events->addEvent(12, 1, "sleep_dim50_remote", "PRESS_SHORT", 8, "toggleDimLight.php", "Dimmer-Schlafzimmer 50");
+
+$hm->events->delEvent("sleep_dim100_remote");
+$hm->events->addEvent(12, 2, "sleep_dim100_remote", "PRESS_SHORT", 8, "toggleDimLight.php", "Dimmer-Schlafzimmer 100");
+
 ?>
