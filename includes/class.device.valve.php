@@ -9,20 +9,15 @@ class HomeMaticValve extends HomeMaticGenericDevice {
 	private $tempFallValue;
 	private $tempFallTemp;
 	private $tempFallWindow;
-	private $batteryVoltage;
 
 	private $controlModes = array("auto", "manual", "party", "boost");
 	private $tempFallModes = array("inactive","auto","auto_manual","auto_party","active");
 
 	private $lastParamsetUpdate = 0;
 
-	function __construct($address, $channels, $xmlrpc) {
-		parent::__construct($address, $channels, $xmlrpc);
-	}
-
-	function getBatteryVoltage() {
-		$this->batteryVoltage = $this->XMLRPC->send("getValue", array(intval($this->peerId), 4, "BATTERY_STATE", false));
-		return $this->batteryVoltage;
+	function __construct($address, $id, $type, $name, $xmlrpc) {
+		parent::__construct($address, $id, $type, $name, $xmlrpc);
+		$this->hasBatteryState = true;
 	}
 
 	function getTempSensor() {

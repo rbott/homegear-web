@@ -4,8 +4,9 @@ class HomeMaticEnvSensors extends HomeMaticGenericDevice {
 	private $tempSensor;
 	private $humidSensors;
 
-	function __construct($address, $channels, $xmlrpc) {
-		parent::__construct($address, $channels, $xmlrpc);
+	function __construct($address, $id, $type, $name, $xmlrpc) {
+		parent::__construct($address, $id, $type, $name, $xmlrpc);
+		$this->hasBatteryState = true;
 	}
 
 	function getTempSensor() {

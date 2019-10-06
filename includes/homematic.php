@@ -37,28 +37,26 @@ class HomeMaticInstance
 
 		$this->events = new HomeMaticEvents($this->XMLRPC);
 
-		$devices = $this->XMLRPC->send("listDevices", array());
+		$devices = $this->XMLRPC->send("listDevices", array(false, array("NAME", "ID", "TYPE", "ADDRESS")));
 		foreach($devices AS $device) {
-			if(empty($device["PARENT"])) {
-				switch($device["TYPE"]) {
-				case "HM-WDS40-TH-I-2":
-					$this->envSensors[] = new HomeMaticEnvSensors($device["ADDRESS"], $device["CHANNELS"], $this->XMLRPC);
-					break;
-				case "HM-CC-RT-DN":
-					$this->valves[] = new HomeMaticValve($device["ADDRESS"], $device["CHANNELS"], $this->XMLRPC);
-					break;
-				case "HM-LC-Dim1T-FM":
-					$this->dimmers[] = new HomeMaticDimmer($device["ADDRESS"], $device["CHANNELS"], $this->XMLRPC);
-					break;
-				case "HM-ES-PMSw1-Pl":
-				case "HM-ES-PMSw1-Pl-DN-R1":
-					$this->pwrSensors[] = new HomeMaticPwrSensor($device["ADDRESS"], $device["CHANNELS"], $this->XMLRPC);
-					break;
-				case "HM-PB-6-WM55":
-				case "HM-RC-8":
-					$this->switches[] = new HomeMaticSwitch($device["ADDRESS"], $device["CHANNELS"], $this->XMLRPC);
-					break;
-				}
+			switch($device["TYPE"]) {
+			case "HM-WDS40-TH-I-2":
+				$this->envSensors[] = new HomeMaticEnvSensors($device["ADDRESS"], $device["ID"], $device["TYPE"], $device["NAME"], $this->XMLRPC);
+				break;
+			case "HM-CC-RT-DN":
+				$this->valves[] = new HomeMaticValve($device["ADDRESS"], $device["ID"], $device["TYPE"], $device["NAME"], $this->XMLRPC);
+				break;
+			case "HM-LC-Dim1T-FM":
+				$this->dimmers[] = new HomeMaticDimmer($device["ADDRESS"], $device["ID"], $device["TYPE"], $device["NAME"], $this->XMLRPC);
+				break;
+			case "HM-ES-PMSw1-Pl":
+			case "HM-ES-PMSw1-Pl-DN-R1":
+				$this->pwrSensors[] = new HomeMaticPwrSensor($device["ADDRESS"], $device["ID"], $device["TYPE"], $device["NAME"], $this->XMLRPC);
+				break;
+			case "HM-PB-6-WM55":
+			case "HM-RC-8":
+				$this->switches[] = new HomeMaticSwitch($device["ADDRESS"], $device["ID"], $device["TYPE"], $device["NAME"], $this->XMLRPC);
+				break;
 			}
 		}
 	}
@@ -293,8 +291,10 @@ class HomeMaticInstance
 					"address" => $valve->getAddress(),
 					"typeString" => $valve->getTypeString(),
 					"type" => "valve",
+					"rssi" => $valve->getRssi(),
 					"hasLinks" => $valve->hasLinks(),
 					"links" => $valve->getLinks(),
+					"hasBattery" => $valve->hasBattery(),
 					"batteryLow" => $valve->isBatteryLow(),
 					"batteryVoltage" => $valve->getBatteryVoltage());
 			}
@@ -304,6 +304,7 @@ class HomeMaticInstance
 					"address" => $valve->getAddress(),
 					"typeString" => $valve->getTypeString(),
 					"type" => "valve",
+					"rssi" => $valve->getRssi(),
 					"hasLinks" => $valve->hasLinks(),
 					"links" => $valve->getLinks(),
 					"valveState" => $valve->getValveState(),
@@ -313,6 +314,7 @@ class HomeMaticInstance
 					"tempFallMode" => $valve->getTempFallMode(),
 					"tempFallTemp" => $valve->getTempFallTemp(),
 					"tempFallWindow" => $valve->getTempFallWindow(),
+					"hasBattery" => $valve->hasBattery(),
 					"batteryLow" => $valve->isBatteryLow(),
 					"batteryVoltage" => $valve->getBatteryVoltage());
 			}
@@ -324,9 +326,12 @@ class HomeMaticInstance
 					"address" => $sensor->getAddress(),
 					"typeString" => $sensor->getTypeString(),
 					"type" => "envsensor",
+					"rssi" => $sensor->getRssi(),
 					"hasLinks" => $sensor->hasLinks(),
 					"links" => $sensor->getLinks(),
-					"batteryLow" => $sensor->isBatteryLow());
+					"hasBattery" => $sensor->hasBattery(),
+					"batteryLow" => $sensor->isBatteryLow(),
+					"batteryVoltage" => $sensor->getBatteryVoltage());
 			}
 			else {
 				$devices[] = array( "name" => $sensor->getName(),
@@ -334,11 +339,14 @@ class HomeMaticInstance
 					"address" => $sensor->getAddress(),
 					"typeString" => $sensor->getTypeString(),
 					"type" => "envsensor",
+					"rssi" => $sensor->getRssi(),
 					"hasLinks" => $sensor->hasLinks(),
 					"links" => $sensor->getLinks(),
 					"tempSensor" => $sensor->getTempSensor(),
 					"humidSensor" => $sensor->getHumidSensor(),
-					"batteryLow" => $sensor->isBatteryLow());
+					"hasBattery" => $sensor->hasBattery(),
+					"batteryLow" => $sensor->isBatteryLow(),
+					"batteryVoltage" => $sensor->getBatteryVoltage());
 			}
 		}
 		foreach($this->pwrSensors AS $sensor) {
@@ -348,8 +356,10 @@ class HomeMaticInstance
 					"address" => $sensor->getAddress(),
 					"typeString" => $sensor->getTypeString(),
 					"type" => "pwrsensor",
+					"rssi" => $sensor->getRssi(),
 					"hasLinks" => $sensor->hasLinks(),
 					"links" => $sensor->getLinks(),
+					"hasBattery" => $sensor->hasBattery(),
 					"batteryLow" => $sensor->isBatteryLow());
 			}
 			else {
@@ -358,10 +368,12 @@ class HomeMaticInstance
 					"address" => $sensor->getAddress(),
 					"typeString" => $sensor->getTypeString(),
 					"type" => "pwrsensor",
+					"rssi" => $sensor->getRssi(),
 					"hasLinks" => $sensor->hasLinks(),
 					"links" => $sensor->getLinks(),
 					"enabled" => $sensor->isEnabled(),
 					"power" => $sensor->getPower(),
+					"hasBattery" => $sensor->hasBattery(),
 					"batteryLow" => $sensor->isBatteryLow());
 			}
 		}
@@ -371,33 +383,24 @@ class HomeMaticInstance
 				"address" => $switch->getAddress(),
 				"typeString" => $switch->getTypeString(),
 				"type" => "switch",
+				"rssi" => $switch->getRssi(),
 				"hasLinks" => $switch->hasLinks(),
 				"links" => $switch->getLinks(),
-				"batteryLow" => $switch->isBatteryLow());
+				"hasBattery" => $switch->hasBattery(),
+				"batteryLow" => $switch->isBatteryLow(),
+				"batteryVoltage" => $switch->getBatteryVoltage());
 		}
 		foreach($this->dimmers AS $dimmer) {
-			if(!$withState) {
-				$devices[] = array( "name" => $dimmer->getName(),
-					"peerId" => $dimmer->getPeerId(),
-					"address" => $dimmer->getAddress(),
-					"typeString" => $dimmer->getTypeString(),
-					"type" => "dimmer",
-					"hasLinks" => $dimmer->hasLinks(),
-					"links" => $dimmer->getLinks(),
-					"batteryLow" => $dimmer->isBatteryLow());
-			}
-			else {
-				$devices[] = array( "name" => $dimmer->getName(),
-					"peerId" => $dimmer->getPeerId(),
-					"address" => $dimmer->getAddress(),
-					"typeString" => $dimmer->getTypeString(),
-					"type" => "dimmer",
-					"hasLinks" => $dimmer->hasLinks(),
-					"links" => $dimmer->getLinks(),
-					"enabled" => $dimmer->isEnabled(),
-					"level" => $dimmer->getLevel(),
-					"batteryLow" => $dimmer->isBatteryLow());
-			}
+			$devices[] = array( "name" => $dimmer->getName(),
+				"peerId" => $dimmer->getPeerId(),
+				"address" => $dimmer->getAddress(),
+				"typeString" => $dimmer->getTypeString(),
+				"type" => "dimmer",
+				"rssi" => $dimmer->getRssi(),
+				"hasLinks" => $dimmer->hasLinks(),
+				"links" => $dimmer->getLinks(),
+				"hasBattery" => $dimmer->hasBattery(),
+				"batteryLow" => $dimmer->isBatteryLow());
 		}
 
 		return $devices;

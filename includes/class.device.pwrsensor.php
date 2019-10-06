@@ -8,11 +8,6 @@ class HomeMaticPwrSensor extends HomeMaticGenericDevice {
 	private $current;
 	private $energyCounter;
 
-	function __construct($address, $channels, $xmlrpc) {
-		parent::__construct($address, $channels, $xmlrpc);
-		$this->hasBattery = false;
-	}
-
 	function isEnabled() {
 		$this->enabled = boolval($this->XMLRPC->send("getValue", array(intval($this->peerId), 1, "STATE", false)));
 		return $this->enabled;

@@ -14,6 +14,7 @@
 								<th>Peer Name</th>
 								<th>Address/Serial</th>
 								<th>Type</th>
+								<th>RSSI</th>
 								<th>Battery</th>
 							</tr>
 {% for device in devices %}
@@ -22,7 +23,8 @@
 								<td>{{ device.name }}</td>
 								<td>{{ device.address }}</td>
 								<td>{{ device.typeString }}</td>
-								<td>{% if not device.batteryLow %}OK{% else %}FAIL{% endif %}{% if device.type == "valve" %} ({{ device.batteryVoltage }}V){% endif %}</td>
+								<td>{{ device.rssi }} dBm</td>
+								<td>{% if device.hasBattery %}{% if not device.batteryLow %}OK{% else %}FAIL{% endif %} ({{ device.batteryVoltage }}V){% else %}n/a{% endif %}</td>
 							</tr>
 {% endfor %}	
 						</table>
