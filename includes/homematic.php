@@ -395,6 +395,7 @@ class HomeMaticInstance
 					"hasLinks" => $dimmer->hasLinks(),
 					"links" => $dimmer->getLinks(),
 					"enabled" => $dimmer->isEnabled(),
+					"level" => $dimmer->getLevel(),
 					"batteryLow" => $dimmer->isBatteryLow());
 			}
 		}
@@ -524,6 +525,9 @@ class HomeMaticInstance
 				$data["pwrsensor"]["current"][$device["name"]] = $sensor->getCurrent();
 				$data["pwrsensor"]["energyCounter"][$device["name"]] = $sensor->getEnergyCounter();
 				break;
+			case "dimmer":
+				$data["dimmer"]["level"][$device["name"]] = $device["level"];
+				break;
 			}
 		}
 		foreach($data AS $type => $device) {
@@ -575,7 +579,13 @@ class HomeMaticInstance
 					$result .= sprintf("homematic_%s_energycounter{name=\"%s\"} %s\n", $type, $name, $energyCounter);
 				}
 			}
-
+			if($type == "dimmer") {
+				$result .= sprintf("# TYPE homematic_%s_level gauge\n", $type);
+				foreach($device["level"] AS $name => $level) {
+					$level = $level * 100;
+					$result .= sprintf("homematic_%s_level{name=\"%s\"} %d\n", $type, $name, $level);
+				}
+			}
 		}
 		return $result;
 	}
