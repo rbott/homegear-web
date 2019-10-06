@@ -7,6 +7,7 @@ class HomeMaticGenericDevice {
 	protected $peerId;
 	protected $typeString;
 	protected $name;
+	protected $rssi;
 	protected $hasBattery = true;
 	protected $lowBattery = false;
 	protected $links = array();
@@ -51,6 +52,11 @@ class HomeMaticGenericDevice {
 
 	function getTypeString() {
 		return $this->typeString;
+	}
+
+	function getRssi() {
+		$this->rssi = $this->lowBattery = $this->XMLRPC->send("getValue", array(intval($this->peerId), 0, "RSSI_DEVICE", false));
+		return $this->rssi;
 	}
 
 	function getLinks() {
