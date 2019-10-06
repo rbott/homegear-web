@@ -4,10 +4,11 @@ $BASEPATH = realpath(dirname(__FILE__));
 
 include_once("/var/lib/homegear/scripts/HM-XMLRPC-Client/Client.php");
 include_once($BASEPATH . "/class.device.generic.php");
-include_once($BASEPATH . "/class.device.valve.php");
+include_once($BASEPATH . "/class.device.dimmer.php");
 include_once($BASEPATH . "/class.device.envsensor.php");
 include_once($BASEPATH . "/class.device.pwrsensor.php");
 include_once($BASEPATH . "/class.device.switch.php");
+include_once($BASEPATH . "/class.device.valve.php");
 include_once($BASEPATH . "/class.meta.tempset.php");
 include_once($BASEPATH . "/class.meta.events.php");
 include_once($BASEPATH . "/../includes/redis/redis.php");
@@ -16,10 +17,11 @@ include_once($BASEPATH . "/../config/config.inc.php");
 class HomeMaticInstance
 {
 	private $XMLRPC;
-	private $valves = array();
+	private $dimmers = array();
 	private $envSensors = array();
 	private $pwrSensors = array();
 	private $switches = array();
+	private $valves = array();
 	private $peeringTimeout = -1;
 	private $config = array();
 
@@ -44,6 +46,9 @@ class HomeMaticInstance
 					break;
 				case "HM-CC-RT-DN":
 					$this->valves[] = new HomeMaticValve($device["ADDRESS"], $device["CHANNELS"], $this->XMLRPC);
+					break;
+				case "HM-LC-Dim1T-FM":
+					$this->dimmers[] = new HomeMaticDimmer($device["ADDRESS"], $device["CHANNELS"], $this->XMLRPC);
 					break;
 				case "HM-ES-PMSw1-Pl":
 				case "HM-ES-PMSw1-Pl-DN-R1":
@@ -170,6 +175,12 @@ class HomeMaticInstance
 				return $switch;
 			}
 		}
+		foreach($this->dimmers AS $dimmer) {
+			if($dimmer->getName() == $name) {
+				return $dimmer;
+			}
+		}
+
 		return false;
 	}
 
@@ -194,6 +205,12 @@ class HomeMaticInstance
 				return $switch;
 			}
 		}
+		foreach($this->dimmers AS $dimmer) {
+			if($dimmer->getPeerId() == $peerId) {
+				return $dimmer;
+			}
+		}
+
 		return false;
 	}
 
@@ -236,6 +253,24 @@ class HomeMaticInstance
 		foreach($this->pwrSensors AS $sensor) {
 			if($sensor->getPeerId() == $peerId) {
 				return $sensor;
+			}
+		}
+		return false;
+	}
+
+	function getDimmerByName($name) {
+		foreach($this->dimmers AS $dimmer) {
+			if($dimmer->getName() == $name) {
+				return $dimmer;
+			}
+		}
+		return false;
+	}
+
+	function getDimmerByPeerId($peerId) {
+		foreach($this->dimmers AS $dimmer) {
+			if($dimmer->getPeerId() == $peerId) {
+				return $dimmer;
 			}
 		}
 		return false;
@@ -289,8 +324,8 @@ class HomeMaticInstance
 					"address" => $sensor->getAddress(),
 					"typeString" => $sensor->getTypeString(),
 					"type" => "envsensor",
-					"hasLinks" => $valve->hasLinks(),
-					"links" => $valve->getLinks(),
+					"hasLinks" => $sensor->hasLinks(),
+					"links" => $sensor->getLinks(),
 					"batteryLow" => $sensor->isBatteryLow());
 			}
 			else {
@@ -299,8 +334,8 @@ class HomeMaticInstance
 					"address" => $sensor->getAddress(),
 					"typeString" => $sensor->getTypeString(),
 					"type" => "envsensor",
-					"hasLinks" => $valve->hasLinks(),
-					"links" => $valve->getLinks(),
+					"hasLinks" => $sensor->hasLinks(),
+					"links" => $sensor->getLinks(),
 					"tempSensor" => $sensor->getTempSensor(),
 					"humidSensor" => $sensor->getHumidSensor(),
 					"batteryLow" => $sensor->isBatteryLow());
@@ -313,8 +348,8 @@ class HomeMaticInstance
 					"address" => $sensor->getAddress(),
 					"typeString" => $sensor->getTypeString(),
 					"type" => "pwrsensor",
-					"hasLinks" => $valve->hasLinks(),
-					"links" => $valve->getLinks(),
+					"hasLinks" => $sensor->hasLinks(),
+					"links" => $sensor->getLinks(),
 					"batteryLow" => $sensor->isBatteryLow());
 			}
 			else {
@@ -323,8 +358,8 @@ class HomeMaticInstance
 					"address" => $sensor->getAddress(),
 					"typeString" => $sensor->getTypeString(),
 					"type" => "pwrsensor",
-					"hasLinks" => $valve->hasLinks(),
-					"links" => $valve->getLinks(),
+					"hasLinks" => $sensor->hasLinks(),
+					"links" => $sensor->getLinks(),
 					"enabled" => $sensor->isEnabled(),
 					"power" => $sensor->getPower(),
 					"batteryLow" => $sensor->isBatteryLow());
@@ -336,10 +371,35 @@ class HomeMaticInstance
 				"address" => $switch->getAddress(),
 				"typeString" => $switch->getTypeString(),
 				"type" => "switch",
-				"hasLinks" => $valve->hasLinks(),
-				"links" => $valve->getLinks(),
+				"hasLinks" => $switch->hasLinks(),
+				"links" => $switch->getLinks(),
 				"batteryLow" => $switch->isBatteryLow());
 		}
+		foreach($this->dimmers AS $dimmer) {
+			if(!$withState) {
+				$devices[] = array( "name" => $dimmer->getName(),
+					"peerId" => $dimmer->getPeerId(),
+					"address" => $dimmer->getAddress(),
+					"typeString" => $dimmer->getTypeString(),
+					"type" => "dimmer",
+					"hasLinks" => $dimmer->hasLinks(),
+					"links" => $dimmer->getLinks(),
+					"batteryLow" => $dimmer->isBatteryLow());
+			}
+			else {
+				$devices[] = array( "name" => $dimmer->getName(),
+					"peerId" => $dimmer->getPeerId(),
+					"address" => $dimmer->getAddress(),
+					"typeString" => $dimmer->getTypeString(),
+					"type" => "dimmer",
+					"hasLinks" => $dimmer->hasLinks(),
+					"links" => $dimmer->getLinks(),
+					"enabled" => $dimmer->isEnabled(),
+					"power" => $dimmer->getPower(),
+					"batteryLow" => $dimmer->isBatteryLow());
+			}
+		}
+
 		return $devices;
 	}
 
