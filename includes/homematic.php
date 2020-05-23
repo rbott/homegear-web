@@ -118,12 +118,14 @@ class HomeMaticInstance
 		$messages = $this->XMLRPC->send("getServiceMessages", array(true));
 		$return = array();
 		foreach($messages AS $message) {
+			if($message["TYPE"] != 2) continue;
 			if(is_numeric($message["PEER_ID"])) {
-			$entry = array( "id" => $message["PEER_ID"],
-				"deviceName" => $this->getDeviceByPeerId($message["PEER_ID"])->getName(),
-				"type" => $message["TYPE"],
-				"value" => $message["VALUE"]);
+				$entry = array( "id" => $message["PEER_ID"],
+					"deviceName" => $this->getDeviceByPeerId($message["PEER_ID"])->getName(),
+					"type" => $message["TYPE"],
+					"value" => $message["VALUE"]);
 			}
+			$entry["timestamp"] = date("d.m.Y H:i:s", $message["TIMESTAMP"]);
 			switch ($message["MESSAGE"]) {
 			case "STICKY_UNREACH":
 				# we ignore these for now
@@ -141,11 +143,11 @@ class HomeMaticInstance
 				$return[] = $entry;
 				break;
 			case "ERROR":
-				$entry["message"] = "An undefined error has occured with this device (payload: '" . $message[3] . "').";
+				$entry["message"] = "An undefined error has occured with this device (payload: '" . $message["VALUE"] . "').";
 				$return[] = $entry;
 				break;
 			default:
-				$entry["message"] = "Unknown message type '" . $message[2] . "' with payload '" . $message[3] . "' occured.";
+				$entry["message"] = "Unknown message type '" . $message["MESSAGE"] . "' with payload '" . $message["VALUE"] . "' occured.";
 				$return[] = $entry;
 			}
 		}
