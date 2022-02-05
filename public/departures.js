@@ -1,21 +1,21 @@
 function getDepartureData() {
-	const myRequest = new Request('/transportation');
+    const myRequest = new Request('/transportation');
 
-	fetch(myRequest)
-		.then(response => response.json())
-		.then(data => {
-			heatingRow = document.querySelector("#departure-row")
-			heatingRow.innerHTML = ""
-			for (var i = 0; i < data.elements.length; i++) {
-				if(i >= 12) {
-					break;
-				}
-				fragment = createDepartureElement(data.elements[i])
-				heatingRow.appendChild(fragment)
-			}
+    fetch(myRequest)
+        .then(response => response.json())
+        .then(data => {
+            heatingRow = document.querySelector("#departure-row")
+            heatingRow.innerHTML = ""
+            for (var i = 0; i < data.elements.length; i++) {
+                if (i >= 12) {
+                    break;
+                }
+                fragment = createDepartureElement(data.elements[i])
+                heatingRow.appendChild(fragment)
+            }
 
-		})
-		.catch(console.error);
+        })
+        .catch(console.error);
 }
 
 function createDepartureElement(item) {
@@ -28,19 +28,19 @@ function createDepartureElement(item) {
     switch (item.type) {
         case 'Bus':
             icon = "ion-android-bus"
-	    indicatorClass = "indigo"
-	break;
+            indicatorClass = "indigo"
+            break;
         case 'S-Bahn':
         case 'Zug':
             icon = "ion-android-train"
-	    indicatorClass = "olive"
-	break;
+            indicatorClass = "olive"
+            break;
         case 'Straßenbahn':
         case 'Stadtbahn':
         case 'U-Bahn':
             icon = "ion-android-subway"
             indicatorClass = "maroon"
-	break;
+            break;
         default:
             icon = "ion-android-bus"
             indicatorClass = "indigo"
