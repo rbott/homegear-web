@@ -18,6 +18,7 @@ function getDepartureData() {
             loader = document.querySelector("#loader")
             loader.style.display = "inline"
             loaderText = document.querySelector("#loader-info")
+            d = new Date()
             loaderText.innerHTML = "Last Update: " + d.toLocaleString()
         })
         .catch(console.error);
