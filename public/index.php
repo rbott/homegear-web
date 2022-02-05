@@ -131,7 +131,16 @@ $app->get('/heaters', function() use ($app) {
 	$app->response->headers->set("Content-Type", "application/json");
 	$hm = new homeMaticInstance();
 	$devices = $hm->getAllValves();
-	print_r($devices);
+	$return_data = [];
+	foreach($devices as $device) {
+		$return_data[] = [
+			"name" => $device->getName(),
+			"temperature" => (float)$device->getTemperature(),
+			"valve" => (int)$device->getValveState(),
+			"target" => (float)$device->getTargetTemp()
+		];
+	}
+	echo json_encode([ "elements" => $return_data]);
 });
 
 $app->get('/overview', function() use ($app) {
