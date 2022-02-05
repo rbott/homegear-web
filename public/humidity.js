@@ -1,24 +1,21 @@
-sampleHumidityData = {
-    elements: [{
-            name: "Wohnzimmer",
-            temperature: 20.5,
-            humidity: 55
-        },
-        {
-            name: "Schlafzimmer",
-            temperature: 19.5,
-            humidity: 63
-        },
-        {
-            name: "Bad",
-            temperature: 19.5,
-            humidity: 56
-        }
-    ]
-}
-
 function getHumidityData() {
-    return sampleHumidityData
+    const myRequest = new Request('/env-sensors');
+
+    fetch(myRequest)
+        .then(response => response.json())
+        .then(data => {
+            for (var i = 0; i < data.elements.length; i++) {
+                fragment = createHumidityElement(data.elements[i])
+                humidityElement = document.querySelector("#Humidity-" + data.elements[i].name)
+                humidityRow = document.querySelector("#humidity-row")
+                if (humidityElement) {
+                    humidityElement.parentNode.parentNode.replaceChild(fragment.firstChild, humidityElement.parentNode)
+                } else {
+                    humidityRow.appendChild(fragment)
+                }
+            }
+        })
+        .catch(console.error);
 }
 
 function createHumidityElement(item) {
@@ -57,15 +54,5 @@ function createHumidityElement(item) {
 
 
 function refreshHumidityData() {
-    data = getHumidityData()
-    for (var i = 0; i < data.elements.length; i++) {
-        fragment = createHumidityElement(data.elements[i])
-        humidityElement = document.querySelector("#Humidity-" + data.elements[i].name)
-        humidityRow = document.querySelector("#humidity-row")
-        if (humidityElement) {
-            humidityElement.parentNode.parentNode.replaceChild(fragment.firstChild, humidityElement.parentNode)
-        } else {
-            humidityRow.appendChild(fragment)
-        }
-    }
+    getHumidityData()
 }
