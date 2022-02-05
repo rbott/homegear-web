@@ -1,5 +1,5 @@
 function getDepartureData() {
-    const myRequest = new Request('/transportation');
+    const myRequest = new Request('/heaters');
 
     fetch(myRequest)
         .then(response => response.json())
