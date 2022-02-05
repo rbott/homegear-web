@@ -1,4 +1,4 @@
-function getDepartureData() {
+function getHeaterData() {
     const myRequest = new Request('/heaters');
 
     fetch(myRequest)
