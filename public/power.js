@@ -7,7 +7,7 @@ function getPowerData() {
             for (var i = 0; i < data.elements.length; i++) {
                 fragment = createPowerElement(data.elements[i])
                 powerElement = document.querySelector("#Power-" + data.elements[i].name)
-                powerRow = document.querySelector("#humidity-row")
+                powerRow = document.querySelector("#power-row")
                 if (powerElement) {
                     powerElement.parentNode.parentNode.replaceChild(fragment.firstChild, powerElement.parentNode)
                 } else {
