@@ -1,4 +1,6 @@
 function getDepartureData() {
+    loader = document.querySelector("#loader")
+    loader.style.display = "inline"
     const myRequest = new Request('/transportation');
 
     fetch(myRequest)
@@ -13,7 +15,10 @@ function getDepartureData() {
                 fragment = createDepartureElement(data.elements[i])
                 departureRow.appendChild(fragment)
             }
-
+            loader = document.querySelector("#loader")
+            loader.style.display = "inline"
+            loaderText = document.querySelector("#loader-info")
+            loaderText.innerHTML = "Last Update: " + d.toLocaleString()
         })
         .catch(console.error);
 }
