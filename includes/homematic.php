@@ -41,6 +41,7 @@ class HomeMaticInstance
 		foreach($devices AS $device) {
 			switch($device["TYPE"]) {
 			case "HM-WDS40-TH-I-2":
+			case "HM-WDS40-TH-I":
 				$this->envSensors[] = new HomeMaticEnvSensors($device["ADDRESS"], $device["ID"], $device["TYPE"], $device["NAME"], $this->XMLRPC);
 				break;
 			case "HM-CC-RT-DN":
