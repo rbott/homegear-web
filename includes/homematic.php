@@ -290,6 +290,26 @@ class HomeMaticInstance
 		return $devices;
 	}
 
+	function getAllEnvSensors() {
+		return $this->envSensors;
+	}
+
+	function getAllPwrSensors() {
+		return $this->pwrSensors;
+	}
+
+	function getAllValves() {
+		return $this->valves;
+	}
+
+	function getAllDimmers() {
+		return $this->dimmers;
+	}
+
+	function getAllSwitches() {
+		return $this->switches;
+	}
+
 	function getAllTemperatures() {
 		$temps = array();
 		foreach($this->valves AS $valve) {

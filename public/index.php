@@ -130,7 +130,7 @@ $app->get('/transportation', function() use ($app) {
 $app->get('/heaters', function() use ($app) {
 	$app->response->headers->set("Content-Type", "application/json");
 	$hm = new homeMaticInstance();
-	$devices = $hm->getAllTemperatures();
+	$devices = $hm->getAllValves();
 	print_r($devices);
 });
 
