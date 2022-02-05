@@ -127,6 +127,13 @@ $app->get('/transportation', function() use ($app) {
 	echo json_encode([ "elements" => $return_data ]);
 });
 
+$app->get('/heaters', function() use ($app) {
+	$app->response->headers->set("Content-Type", "application/json");
+	$hm = new homeMaticInstance();
+	$devices = $hm->getAllTemperatures();
+	print_r($devices);
+});
+
 $app->get('/overview', function() use ($app) {
 	$hm = new homeMaticInstance();
 	$devices = $hm->getAllDevices();
