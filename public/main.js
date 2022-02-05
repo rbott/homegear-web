@@ -8,5 +8,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
     refreshHeaterData()
     setInterval(refreshHeaterData, 60000)
 
-    getDeparturesData()
+    refreshDepartureData()
+    setInterval(refreshDepartureData, 60000)
 });
