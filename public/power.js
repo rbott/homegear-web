@@ -1,4 +1,6 @@
 function getPowerData() {
+    loader = document.querySelector("#loader")
+    loader.style.display = "inline"
     const myRequest = new Request('/power-sensors');
 
     fetch(myRequest)
@@ -14,6 +16,11 @@ function getPowerData() {
                     powerRow.appendChild(fragment)
                 }
             }
+            loader = document.querySelector("#loader")
+            loader.style.display = "none"
+            loaderText = document.querySelector("#loader-info")
+            d = new Date()
+            loaderText.innerHTML = "Last Update: " + d.toLocaleString()
         })
         .catch(console.error);
 }

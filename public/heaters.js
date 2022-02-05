@@ -1,4 +1,6 @@
 function getHeaterData() {
+    loader = document.querySelector("#loader")
+    loader.style.display = "inline"
     const myRequest = new Request('/heaters');
 
     fetch(myRequest)
@@ -14,6 +16,11 @@ function getHeaterData() {
                     heatingRow.appendChild(fragment)
                 }
             }
+            loader = document.querySelector("#loader")
+            loader.style.display = "none"
+            loaderText = document.querySelector("#loader-info")
+            d = new Date()
+            loaderText.innerHTML = "Last Update: " + d.toLocaleString()
         })
         .catch(console.error);
 }
