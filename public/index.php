@@ -140,6 +140,11 @@ $app->get('/heaters', function() use ($app) {
 			"target" => (float)$device->getTargetTemp()
 		];
 	}
+
+	function cmp($a, $b) {
+		return strcmp($a["name"], $b["name"]);
+	}
+	usort($return_data, "cmp");
 	echo json_encode([ "elements" => $return_data]);
 });
 
@@ -156,6 +161,10 @@ $app->get('/env-sensors', function() use ($app) {
 			"humidity" => (int)$device->getHumidSensor()
 		];
 	}
+	function cmp($a, $b) {
+		return strcmp($a["name"], $b["name"]);
+	}
+	usort($return_data, "cmp");
 	echo json_encode([ "elements" => $return_data]);
 });
 
@@ -171,6 +180,10 @@ $app->get('/power-sensors', function() use ($app) {
 			"enabled" => $device->isEnabled()
 		];
 	}
+	function cmp($a, $b) {
+		return strcmp($a["name"], $b["name"]);
+	}
+	usort($return_data, "cmp");
 	echo json_encode([ "elements" => $return_data]);
 });
 
