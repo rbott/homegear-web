@@ -1,5 +1,5 @@
 function getPowerData() {
-    const myRequest = new Request('/transportation');
+    const myRequest = new Request('/power-sensors');
 
     fetch(myRequest)
         .then(response => response.json())
