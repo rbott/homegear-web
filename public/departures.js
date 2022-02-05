@@ -4,14 +4,14 @@ function getDepartureData() {
     fetch(myRequest)
         .then(response => response.json())
         .then(data => {
-            heatingRow = document.querySelector("#departure-row")
-            heatingRow.innerHTML = ""
+            departureRow = document.querySelector("#departure-row")
+            departureRow.innerHTML = ""
             for (var i = 0; i < data.elements.length; i++) {
                 if (i >= 12) {
                     break;
                 }
                 fragment = createDepartureElement(data.elements[i])
-                heatingRow.appendChild(fragment)
+                departureRow.appendChild(fragment)
             }
 
         })

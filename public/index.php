@@ -159,6 +159,21 @@ $app->get('/env-sensors', function() use ($app) {
 	echo json_encode([ "elements" => $return_data]);
 });
 
+$app->get('/power-sensors', function() use ($app) {
+	$app->response->headers->set("Content-Type", "application/json");
+	$hm = new homeMaticInstance();
+	$devices = $hm->getAllPwrSensors();
+	$return_data = [];
+	foreach($devices as $device) {
+		$return_data[] = [
+			"name" => str_replace("Temp-", "", $device->getName()),
+			"usage" => (float)$device->getPower(),
+			"enabled" => $device->isEnabled()
+		];
+	}
+	echo json_encode([ "elements" => $return_data]);
+});
+
 $app->get('/overview', function() use ($app) {
 	$hm = new homeMaticInstance();
 	$devices = $hm->getAllDevices();

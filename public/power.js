@@ -1,24 +1,21 @@
-samplePowerData = {
-    elements: [{
-            name: "Weihnachtslicht-1",
-            usage: 13.5,
-            enabled: true
-        },
-        {
-            name: "Weihnachtslicht-2",
-            usage: 28,
-            enabled: true
-        },
-        {
-            name: "Heizlüfter",
-            usage: 900,
-            enabled: true
-        }
-    ]
-}
-
 function getPowerData() {
-    return samplePowerData
+    const myRequest = new Request('/transportation');
+
+    fetch(myRequest)
+        .then(response => response.json())
+        .then(data => {
+            for (var i = 0; i < data.elements.length; i++) {
+                fragment = createPowerElement(data.elements[i])
+                powerElement = document.querySelector("#Power-" + data.elements[i].name)
+                powerRow = document.querySelector("#humidity-row")
+                if (powerElement) {
+                    powerElement.parentNode.parentNode.replaceChild(fragment.firstChild, powerElement.parentNode)
+                } else {
+                    powerRow.appendChild(fragment)
+                }
+            }
+        })
+        .catch(console.error);
 }
 
 function createPowerElement(item) {
@@ -55,15 +52,5 @@ function createPowerElement(item) {
 
 
 function refreshPowerData() {
-    data = getPowerData()
-    for (var i = 0; i < data.elements.length; i++) {
-        fragment = createPowerElement(data.elements[i])
-        powerElement = document.querySelector("#Power-" + data.elements[i].name)
-        powerRow = document.querySelector("#humidity-row")
-        if (powerElement) {
-            powerElement.parentNode.parentNode.replaceChild(fragment.firstChild, powerElement.parentNode)
-        } else {
-            powerRow.appendChild(fragment)
-        }
-    }
+    getPowerData()
 }
