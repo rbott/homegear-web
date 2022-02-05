@@ -134,7 +134,7 @@ $app->get('/heaters', function() use ($app) {
 	$return_data = [];
 	foreach($devices as $device) {
 		$return_data[] = [
-			"name" => $device->getName(),
+			"name" => str_replace("Heizung-", "", $device->getName()),
 			"temperature" => (float)$device->getTempSensor(),
 			"valve" => (int)$device->getValveState(),
 			"target" => (float)$device->getTargetTemp()
