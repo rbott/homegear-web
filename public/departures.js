@@ -1,12 +1,21 @@
 function getDepartureData() {
-    const myRequest = new Request('/transportation');
+	const myRequest = new Request('/transportation');
 
-    fetch(myRequest)
-        .then(response => response.json())
-        .then(data => {
-            return data
-        })
-        .catch(console.error);
+	fetch(myRequest)
+		.then(response => response.json())
+		.then(data => {
+			heatingRow = document.querySelector("#departure-row")
+			heatingRow.innerHTML = ""
+			for (var i = 0; i < data.elements.length; i++) {
+				if(i >= 12) {
+					break;
+				}
+				fragment = createDepartureElement(data.elements[i])
+				heatingRow.appendChild(fragment)
+			}
+
+		})
+		.catch(console.error);
 }
 
 function createDepartureElement(item) {
@@ -19,16 +28,26 @@ function createDepartureElement(item) {
     switch (item.type) {
         case 'Bus':
             icon = "ion-android-bus"
+	    indicatorClass = "indigo"
+	break;
         case 'S-Bahn':
         case 'Zug':
             icon = "ion-android-train"
+	    indicatorClass = "olive"
+	break;
         case 'Straßenbahn':
         case 'Stadtbahn':
         case 'U-Bahn':
             icon = "ion-android-subway"
+            indicatorClass = "maroon"
+	break;
         default:
             icon = "ion-android-bus"
+            indicatorClass = "indigo"
     }
+
+    const now = Math.floor(Date.now() / 1000)
+    diff_in_minutes = Math.floor((item.time - now) / 60)
 
     box = []
     box.push('<div class="small-box bg-' + indicatorClass + '" id="Departure-' + item.name + '">')
@@ -39,7 +58,7 @@ function createDepartureElement(item) {
     box.push('<div class="icon">')
     box.push('<i class="ion ' + icon + '"></i>')
     box.push('</div>')
-    box.push('<a href="#" class="small-box-footer">in X Minuten</a>')
+    box.push('<a href="#" class="small-box-footer">in ' + diff_in_minutes + ' Minuten</a>')
     box.push('</div>')
     div.innerHTML = box.join('')
 
@@ -50,14 +69,4 @@ function createDepartureElement(item) {
 
 function refreshDepartureData() {
     data = getDepartureData()
-    for (var i = 0; i < data.elements.length; i++) {
-        fragment = createDepartureElement(data.elements[i])
-        heatingRow = document.querySelector("#departure-row")
-        departureElement = document.querySelector("#Departure-" + data.elements[i].name)
-        if (departureElement) {
-            departureElement.parentNode.parentNode.replaceChild(fragment.firstChild, departureElement.parentNode)
-        } else {
-            heatingRow.appendChild(fragment)
-        }
-    }
 }

@@ -20,8 +20,7 @@ $app->view(new \Slim\Views\Twig());
 $app->view->parserExtensions = array(new \Slim\Views\TwigExtension());
 
 $app->get('/', function() use ($app) {
-	Header("Location: /overview");
-	exit;
+	$app->render('index.html');
 });
 
 $app->get('/metrics', function() use ($app) {
