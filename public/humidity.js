@@ -38,7 +38,7 @@ function createHumidityElement(item) {
     box = []
     box.push('<div class="small-box bg-' + indicatorClass + '" id="Humidity-' + item.name + '">')
     box.push('<div class="inner">')
-    box.push('<h3>' + item.temperature + '°C</h3>')
+    box.push('<h3>' + item.humidity + '%</h3>')
     box.push('<p>' + item.name + '</p>')
     box.push('</div>')
     box.push('<div class="icon">')

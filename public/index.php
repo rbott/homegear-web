@@ -151,7 +151,7 @@ $app->get('/env-sensors', function() use ($app) {
 	$return_data = [];
 	foreach($devices as $device) {
 		$return_data[] = [
-			"name" => str_replace("Heizung-", "", $device->getName()),
+			"name" => str_replace("Temp-", "", $device->getName()),
 			"temperature" => (float)$device->getTempSensor(),
 			"humidity" => (int)$device->getHumidSensor()
 		];
