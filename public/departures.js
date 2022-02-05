@@ -1,4 +1,4 @@
-function getDeparturesData() {
+function getDepartureData() {
     const myRequest = new Request('/transportation');
 
     fetch(myRequest)
