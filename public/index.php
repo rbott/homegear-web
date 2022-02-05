@@ -32,7 +32,22 @@ $app->get('/metrics', function() use ($app) {
 
 $app->get('/transportation', function() use ($app) {
 	$app->response->headers->set("Content-Type", "application/json");
-	$stops = [ "20020064", "20020195", "20020105" ];
+	/*
+	Haltestellen finden:
+	curl -s "https://openservice-test.vrr.de/static02/XML_STOPFINDER_REQUEST?sessionID=0&requestID=0&language=DE&coordOutputFormat=WGS84&place_sf=Neuss&placeState_sf=empty&type_sf=stop&name_sf=Stadthalle&nameState_sf=empty&coordOutputFormatTail=0"|xmlstarlet fo
+
+	Abfahrtstafel für Stadthalle/Museum:
+	curl -v -s "https://openservice-test.vrr.de/static02/XML_DM_REQUEST?sessionID=0&requestID=0&language=DE&type_dm=stopID&name_dm=20020195&useProxFootSearch=0&mode=direct&useRealtime=1" |xmlstarlet fo |less
+
+	Dokumentation:
+	https://www.opendata-oepnv.de/fileadmin/Dokumentationen_etc/VRR/VRR_20181119_Dokumentation_XML_Schnittstelle_V1.3.pdf
+	https://www.opendata-oepnv.de/ht/de/organisation/verkehrsverbuende/vrr/openvrr/api
+	*/
+	$stops = [
+		"20020064", // Friedrich-Ebert-Platz
+		"20020195", // Stadthalle/Museum
+		"20020105"  // Neuss Süd
+	];
 	$interesting_lines = [ 
 		"843" => ["R"],
 		"844" => ["R"],
