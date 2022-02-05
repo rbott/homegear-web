@@ -25,12 +25,16 @@ function createPowerElement(item) {
     classes = ["col-sm-6", "col-md-4", "col-lg-3", "col-xl-2"]
     classes.forEach(item => div.classList.add(item))
 
-    if (item.usage > 500) {
-        indicatorClass = "danger"
-    } else if (item.usage > 5) {
-        indicatorClass = "warning"
+    if (item.enabled) {
+        if (item.usage > 500) {
+            indicatorClass = "danger"
+        } else if (item.usage > 5) {
+            indicatorClass = "warning"
+        } else {
+            indicatorClass = "success"
+        }
     } else {
-        indicatorClass = "success"
+        indicatorClass = "gray"
     }
 
     box = []
