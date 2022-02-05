@@ -31,6 +31,103 @@ $app->get('/metrics', function() use ($app) {
 	echo $stats;
 });
 
+$app->get('/transportation', function() use ($app) {
+	$app->response->headers->set("Content-Type", "application/json");
+	$stops = [ "20020064", "20020195", "20020105" ];
+	$interesting_lines = [ "848", "709", "S11" ];
+	$types = [
+		0 => "Zug",
+		1 => "S-Bahn",
+		2 => "U-Bahn",
+		3 => "Stadtbahn",
+		4 => "Straßenbahn",
+		5 => "Bus",
+		6 => "Bus",
+		7 => "Bus",
+		13 => "Regionalbahn",
+		14 => "Zug",
+		15 => "Zug",
+		16 => "Zug",
+		17 => "Bus"
+	];
+
+	$return_data = [];
+	foreach($stops as $stop) {
+		$params = [
+			"sessionID=0",
+			"requestID=0",
+			"language=DE",
+			"type_dm=stopID",
+			"name_dm=" . $stop,
+			"useProxFootSearch=0",
+			"mode=direct",
+			"limit=15",
+			"useRealtime=1"
+		];
+		$xmlstr=file_get_contents('https://openservice-test.vrr.de/static02/XML_DM_REQUEST?' . join('&', $params));
+		libxml_use_internal_errors(true);
+		$data = new SimpleXMLElement($xmlstr);
+		if ($data === false) {
+			echo "failed";
+			foreach(libxml_get_errors() as $error) {
+				echo $error->message;
+			}
+		}
+		else {
+			$departures = $data->xpath("//itdDeparture");
+			foreach($departures as $dep) {
+				$line = (string)$dep->itdServingLine->attributes()->number;
+				if(in_array($line, $interesting_lines)) {
+					$has_realtime = (int)$dep->itdServingLine->attributes()->realtime;
+					if($has_realtime == 1 && isset($dep->itdRTDateTime)) {
+						$has_realtime = true;
+						$time_base = $dep->itdRTDateTime;
+					} else {
+						$has_realtime = false;
+						$time_base = $dep->itdDateTime;
+					}
+					if($has_realtime) {
+						$delay = (int)$dep->itdServingLine->itdNoTrain->attributes()->delay;
+						if($delay == -9999) {
+							continue;
+						}
+					}
+
+
+					$day = (int)$time_base->itdDate->attributes()->day;
+					$month = (int)$time_base->itdDate->attributes()->month;
+					$year = (int)$time_base->itdDate->attributes()->year;
+					$hour = (int)$time_base->itdTime->attributes()->hour;
+					$minute = (int)$time_base->itdTime->attributes()->minute;
+					$timeString = sprintf("%d/%d/%d %02d:%02d:00", $month, $day, $year, $hour, $minute);
+					$time = strtotime($timeString);
+					if($time < (time() + 150) || $time > (time() + 3600)) {
+						continue;
+					}
+	
+					$direction = (string)$dep->itdServingLine->attributes()->direction;
+					$type = (int)$dep->itdServingLine->attributes()->motType;
+	
+					$return_data[] = [
+						"time" => $time,
+						"timeString" => $timeString,
+						"line" => $line,
+						"direction" => $direction,
+						"type" => $types[$type],
+						"realtime" => $has_realtime
+					];
+				}
+			}
+		}
+	}
+	function cmp($a, $b) {
+		return $a["time"] > $b["time"];
+	}
+
+	usort($return_data, "cmp");
+	echo json_encode([ "elements" => $return_data ]);
+});
+
 $app->get('/overview', function() use ($app) {
 	$hm = new homeMaticInstance();
 	$devices = $hm->getAllDevices();
