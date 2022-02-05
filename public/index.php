@@ -166,7 +166,7 @@ $app->get('/power-sensors', function() use ($app) {
 	$return_data = [];
 	foreach($devices as $device) {
 		$return_data[] = [
-			"name" => str_replace("Temp-", "", $device->getName()),
+			"name" => str_replace("Power-", "", $device->getName()),
 			"usage" => (float)$device->getPower(),
 			"enabled" => $device->isEnabled()
 		];
