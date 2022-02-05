@@ -33,7 +33,7 @@ $app->get('/metrics', function() use ($app) {
 $app->get('/transportation', function() use ($app) {
 	$app->response->headers->set("Content-Type", "application/json");
 	$stops = [ "20020064", "20020195", "20020105" ];
-	$interesting_lines = [ "848", "709", "S11" ];
+	$interesting_lines = [ "843", "844", "848", "709", "S11" ];
 	$types = [
 		0 => "Zug",
 		1 => "S-Bahn",
