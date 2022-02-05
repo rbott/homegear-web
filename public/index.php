@@ -33,7 +33,13 @@ $app->get('/metrics', function() use ($app) {
 $app->get('/transportation', function() use ($app) {
 	$app->response->headers->set("Content-Type", "application/json");
 	$stops = [ "20020064", "20020195", "20020105" ];
-	$interesting_lines = [ "843", "844", "848", "709", "S11" ];
+	$interesting_lines = [ 
+		"843" => ["R"],
+		"844" => ["R"],
+		"848" => ["H","R"],
+		"709" => ["R"],
+		"S11" => ["H","R"]
+	];
 	$types = [
 		0 => "Zug",
 		1 => "S-Bahn",
@@ -76,7 +82,14 @@ $app->get('/transportation', function() use ($app) {
 			$departures = $data->xpath("//itdDeparture");
 			foreach($departures as $dep) {
 				$line = (string)$dep->itdServingLine->attributes()->number;
-				if(in_array($line, $interesting_lines)) {
+				if(array_key_exists($line, $interesting_lines)) {
+					if(isset($dep->itdServingLine->motDivaParams)) {
+						$direction = (string)$dep->itdServingLine->motDivaParams->attributes()->direction;
+						if(!in_array($direction, $interesting_lines[$line])) {
+							continue;
+						}
+					}
+
 					$has_realtime = (int)$dep->itdServingLine->attributes()->realtime;
 					if($has_realtime == 1 && isset($dep->itdRTDateTime)) {
 						$has_realtime = true;
