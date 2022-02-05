@@ -1,39 +1,21 @@
-sampleHeatingData = {
-    elements: [{
-            name: "Wohnzimmer",
-            temperature: 20.5,
-            valve: 99,
-            target: 20.0
-        },
-        {
-            name: "Schlafzimmer",
-            temperature: 19.5,
-            valve: 15,
-            target: 20.0
-        },
-        {
-            name: "Küche",
-            temperature: 19.5,
-            valve: 50,
-            target: 20.0
-        },
-        {
-            name: "Arbeitszimmer",
-            temperature: 21.0,
-            valve: 95,
-            target: 22.0
-        },
-        {
-            name: "Esszimmer",
-            temperature: 21.0,
-            valve: 89,
-            target: 22.0
-        }
-    ]
-}
+function getDepartureData() {
+    const myRequest = new Request('/transportation');
 
-function getHeaterData() {
-    return sampleHeatingData
+    fetch(myRequest)
+        .then(response => response.json())
+        .then(data => {
+            for (var i = 0; i < data.elements.length; i++) {
+                fragment = createHeaterElement(data.elements[i])
+                heatingRow = document.querySelector("#heating-row")
+                heaterElement = document.querySelector("#Heater-" + data.elements[i].name)
+                if (heaterElement) {
+                    heaterElement.parentNode.parentNode.replaceChild(fragment.firstChild, heaterElement.parentNode)
+                } else {
+                    heatingRow.appendChild(fragment)
+                }
+            }
+        })
+        .catch(console.error);
 }
 
 function createHeaterElement(item) {
@@ -70,15 +52,5 @@ function createHeaterElement(item) {
 
 
 function refreshHeaterData() {
-    data = getHeaterData()
-    for (var i = 0; i < data.elements.length; i++) {
-        fragment = createHeaterElement(data.elements[i])
-        heatingRow = document.querySelector("#heating-row")
-        heaterElement = document.querySelector("#Heater-" + data.elements[i].name)
-        if (heaterElement) {
-            heaterElement.parentNode.parentNode.replaceChild(fragment.firstChild, heaterElement.parentNode)
-        } else {
-            heatingRow.appendChild(fragment)
-        }
-    }
+    getHeaterData()
 }

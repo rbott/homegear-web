@@ -68,5 +68,5 @@ function createDepartureElement(item) {
 
 
 function refreshDepartureData() {
-    data = getDepartureData()
+    getDepartureData()
 }
