@@ -36,6 +36,7 @@ function createDepartureElement(item) {
             icon = "ion-android-bus"
             indicatorClass = "indigo"
             break;
+	case 'Regionalbahn':
         case 'S-Bahn':
         case 'Zug':
             icon = "ion-android-train"

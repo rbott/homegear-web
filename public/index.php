@@ -44,16 +44,18 @@ $app->get('/transportation', function() use ($app) {
 	https://www.opendata-oepnv.de/ht/de/organisation/verkehrsverbuende/vrr/openvrr/api
 	*/
 	$stops = [
-		"20020064", // Friedrich-Ebert-Platz
-		"20020195", // Stadthalle/Museum
-		"20020105"  // Neuss Süd
+		"20020056", // Robert-Koch-Str
+		"20020055", // Hauptbahnhof
 	];
 	$interesting_lines = [ 
-		"843" => ["R"],
-		"844" => ["R"],
-		"848" => ["H","R"],
+		"849" => ["H","R"],
 		"709" => ["R"],
-		"S11" => ["H","R"]
+		"S8" => ["H"],
+		"S11" => ["H","R"],
+		"S28" => ["R"],
+		"RE6" => ["H"],
+		"RE7" => ["H"],
+		"U75" => ["H"],
 	];
 	$types = [
 		0 => "Zug",
