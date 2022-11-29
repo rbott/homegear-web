@@ -42,6 +42,11 @@ class HomeMaticGenericDevice {
 		return $this->rssi;
 	}
 
+	function getUnreachFlag() {
+		$this->unreach = $this->XMLRPC->send("getValue", array(intval($this->peerId), 0, "UNREACH", false));
+		return $this->unreach;
+	}
+
 	function getLinks() {
 		$links = $this->XMLRPC->send("getLinks",array($this->peerId));
 		if(!empty($links)) {

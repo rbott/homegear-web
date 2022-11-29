@@ -164,10 +164,12 @@ $app->get('/heaters', function() use ($app) {
 	$return_data = [];
 	foreach($devices as $device) {
 		$return_data[] = [
+			"id" => (int)$device->getPeerId(),
 			"name" => str_replace("Heizung-", "", $device->getName()),
 			"temperature" => (float)$device->getTempSensor(),
 			"valve" => (int)$device->getValveState(),
-			"target" => (float)$device->getTargetTemp()
+			"target" => (float)$device->getTargetTemp(),
+			"unreach" => (bool)$device->getUnreachFlag(),
 		];
 	}
 
@@ -188,7 +190,8 @@ $app->get('/env-sensors', function() use ($app) {
 		$return_data[] = [
 			"name" => str_replace("Temp-", "", $device->getName()),
 			"temperature" => (float)$device->getTempSensor(),
-			"humidity" => (int)$device->getHumidSensor()
+			"humidity" => (int)$device->getHumidSensor(),
+			"unreach" => (bool)$device->getUnreachFlag()
 		];
 	}
 	function cmp($a, $b) {
@@ -207,7 +210,8 @@ $app->get('/power-sensors', function() use ($app) {
 		$return_data[] = [
 			"name" => str_replace("Power-", "", $device->getName()),
 			"usage" => (int)$device->getPower(),
-			"enabled" => $device->isEnabled()
+			"enabled" => $device->isEnabled(),
+			"unreach" => (bool)$device->getUnreachFlag()
 		];
 	}
 	function cmp($a, $b) {
@@ -215,6 +219,15 @@ $app->get('/power-sensors', function() use ($app) {
 	}
 	usort($return_data, "cmp");
 	echo json_encode([ "elements" => $return_data]);
+});
+
+$app->post('/heaters/:id', function($id) use ($app) {
+	$hm = new homeMaticInstance();
+	if($valve = $hm->getValveByPeerId($id)) {
+		$valve->setTargetTemp(floatval($_POST["heaterLevel"]));
+	}
+	Header("Location: /");
+	exit;
 });
 
 $app->get('/overview', function() use ($app) {

@@ -32,7 +32,14 @@ function createHeaterElement(item) {
     classes = ["col-sm-6", "col-md-4", "col-lg-3", "col-xl-2"]
     classes.forEach(item => div.classList.add(item))
 
-    if (item.valve > 80) {
+    if (item.unreach) {
+        indicatorClass = "black"
+        // overwrite data with 0 if device is unreachable
+        item.temperature = 0
+        item.valve = 0
+        item.target = 0
+    }
+    else if (item.valve > 80) {
         indicatorClass = "danger"
     } else if (item.valve > 40) {
         indicatorClass = "warning"
@@ -42,7 +49,7 @@ function createHeaterElement(item) {
 
     box = []
     box.push('<div class="small-box bg-' + indicatorClass + '" id="Heater-' + item.name + '">')
-    box.push('<div class="inner">')
+    box.push('<div class="inner" onclick="toggleHeatingSettingsPopup(' + item.id + ', ' + item.target + ');return false;">')
     box.push('<h3>' + item.temperature + '°C</h3>')
     box.push('<p>' + item.name + '</p>')
     box.push('</div>')
@@ -61,3 +68,12 @@ function createHeaterElement(item) {
 function refreshHeaterData() {
     getHeaterData()
 }
+
+function toggleHeatingSettingsPopup(id, current_temperature) {
+	var heaterModal = new bootstrap.Modal(document.getElementById('heaterModal'), null)
+	document.getElementById('heaterForm').action = "/heaters/" + id
+	document.getElementById('heaterLevelValue').textContent = current_temperature + " °C"
+	document.getElementById('heaterLevel').value = current_temperature
+	heaterModal.show()
+}
+

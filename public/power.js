@@ -32,7 +32,12 @@ function createPowerElement(item) {
     classes = ["col-sm-6", "col-md-4", "col-lg-3", "col-xl-2"]
     classes.forEach(item => div.classList.add(item))
 
-    if (item.enabled) {
+    if (item.unreach) {
+        indicatorClass = "black"
+        // overwrite usage with 0 if device is unreachable
+        item.usage = 0
+    }
+    else if (item.enabled) {
         if (item.usage > 500) {
             indicatorClass = "danger"
         } else if (item.usage > 5) {

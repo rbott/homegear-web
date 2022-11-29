@@ -32,7 +32,13 @@ function createHumidityElement(item) {
     classes = ["col-sm-6", "col-md-4", "col-lg-3", "col-xl-2"]
     classes.forEach(item => div.classList.add(item))
 
-    if (item.humidity > 70) {
+    if (item.unreach) {
+        indicatorClass = "black"
+        // overwrite data with 0 if device is unreachable
+        item.humidity = 0
+        item.temperature = 0
+    }
+    else if (item.humidity > 70) {
         indicatorClass = "danger"
     } else if (item.humidity > 60) {
         indicatorClass = "warning"
