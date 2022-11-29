@@ -44,18 +44,20 @@ $app->get('/transportation', function() use ($app) {
 	https://www.opendata-oepnv.de/ht/de/organisation/verkehrsverbuende/vrr/openvrr/api
 	*/
 	$stops = [
-		"20020056", // Robert-Koch-Str
-		"20020055", // Hauptbahnhof
-	];
-	$interesting_lines = [ 
-		"849" => ["H","R"],
-		"709" => ["R"],
-		"S8" => ["H"],
-		"S11" => ["H","R"],
-		"S28" => ["R"],
-		"RE6" => ["H"],
-		"RE7" => ["H"],
-		"U75" => ["H"],
+		// Robert-Koch-Str
+		"20020056" => [
+			"849" => ["H","R"],
+		],
+		// Hauptbahnhof
+		"20020055" => [
+			"709" => ["R"],
+			"S8" => ["H"],
+			"S11" => ["H","R"],
+			"S28" => ["R"],
+			"RE6" => ["H"],
+			"RE7" => ["H"],
+			"U75" => ["H"]
+		]
 	];
 	$types = [
 		0 => "Zug",
@@ -74,7 +76,7 @@ $app->get('/transportation', function() use ($app) {
 	];
 
 	$return_data = [];
-	foreach($stops as $stop) {
+	foreach($stops as $stop => $interesting_lines) {
 		$params = [
 			"sessionID=0",
 			"requestID=0",
@@ -83,7 +85,7 @@ $app->get('/transportation', function() use ($app) {
 			"name_dm=" . $stop,
 			"useProxFootSearch=0",
 			"mode=direct",
-			"limit=15",
+			"limit=40",
 			"useRealtime=1"
 		];
 		$xmlstr=file_get_contents('https://openservice-test.vrr.de/static02/XML_DM_REQUEST?' . join('&', $params));
