@@ -10,6 +10,13 @@ require_once('../includes/Slim/Slim.php');
 require_once('../config/config.inc.php');
 require_once('../includes/homematic.php');
 
+# ugly workaround to make slim 2.x work on PHP 8.x
+function get_magic_quotes_gpc() 
+{
+    return false;
+}
+# end of ugly workaround
+
 \Slim\Slim::registerAutoloader();
 
 $app = new \Slim\Slim(array(
