@@ -22,7 +22,7 @@ class HomeMaticEvents {
 
 
 
-	function HomeMaticEvents ($xmlrpc) {
+	function __construct ($xmlrpc) {
 		$this->XMLRPC = $xmlrpc;
 	}
 

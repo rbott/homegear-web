@@ -2,7 +2,7 @@
 
 $BASEPATH = realpath(dirname(__FILE__));
 
-include_once("/var/lib/homegear/scripts/HM-XMLRPC-Client/Client.php");
+include_once($BASEPATH . "/HM-XMLRPC-Client.php");
 include_once($BASEPATH . "/class.device.generic.php");
 include_once($BASEPATH . "/class.device.dimmer.php");
 include_once($BASEPATH . "/class.device.envsensor.php");
@@ -27,7 +27,7 @@ class HomeMaticInstance
 
 	public $events;
 
-	function HomeMaticInstance() {
+	function __construct() {
 		global $config;
 		$host = "localhost";
 		$port = 2001;

@@ -23,7 +23,7 @@ class tempsetInstance {
 		}
 	}
 
-	function tempsetInstance() {
+	function __construct() {
 	}
 
 	function prepareTempset() {
